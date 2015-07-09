@@ -1,0 +1,88 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="dd-coating-chip">
+  
+  <style is='custom-style'>
+    :host {
+      display: inline-block;
+      color: var(--text-primary-color);
+    }
+    
+    .coating-chip.mdl-card {
+      margin: 24px;
+      width: 256px;
+      height: 256px;
+      background: var(--default-primary-color);
+    }
+    
+    .coating-chip > .mdl-card__actions {
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+    
+    .coating-chip > .mdl-card__title {
+      color: inherit;
+    }
+    
+    .coating-chip > .mdl-card__actions > .mdl-button {
+      color: inherit;
+    }
+    
+  </style>
+  
+  <template>
+    
+    <div class="mdl-card mdl-shadow--2dp coating-chip">
+      
+      <div class='layout horizontal'>
+        <span class='flex'></span>
+        <button id="menu-button" 
+              class="mdl-button mdl-js-button mdl-button--icon">
+          <i class="material-icons">more_vert</i>
+        </button>
+        <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect"
+            for="menu-button">
+          <li class="mdl-menu__item">Remove</li>
+          <li class="mdl-menu__item">Other Option</li>
+        </ul>
+      </div>
+      
+      <div class="mdl-card__title mdl-card--expand layout vertical">
+        <h4 class='mdl-card_title-text'>
+          <content select='.title-text'></content>
+        </h4>
+        <h6 class='mdl-card_subtitle-text'>
+          <content select='.subtitle-text'></content>
+        </h6>
+      </div>
+      
+      <div class="mdl-card__actions mdl-card--border">
+        <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" on-tap='_fireOpenPage'>
+          Edit Details
+        </button>
+      </div>
+
+  </template>
+  
+</dom-module>
+<script>
+  Polymer({
+    
+    is: 'dd-coating-chip',
+    
+    _fireOpenPage: function(event) {
+      this.fire('dd-open-page');
+    }
+    
+  });
+
+</script>
