@@ -1,0 +1,180 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="dd-capsule-graphic">
+  <style is='custom-style'>
+    :host {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    svg {
+      height: 200px;
+      width: 200px;
+    }
+    
+    .outline {
+      fill: none;
+      stroke-width: 2.5px;
+      stroke: var(--divider-color);
+    }
+    
+    .fill {
+      stroke: transparent;
+      fill: var(--default-primary-color);
+    }
+  </style>
+  <template>
+    <svg id='capsule_graphic'>
+      <path class='fill' d$='{{_fillPath}}'></path>
+      <path class='outline' d$='{{_outlinePath}}'/>
+      <path class='outline' d$='{{_outlineBellyBandPath}}'/>
+    </svg>
+  </template>
+</dom-module>
+<script>
+
+  Polymer({
+    
+    is: 'dd-capsule-graphic',
+
+    properties: {
+      
+      capsuleFillPercent: {
+        type: Number, 
+        value: 0.7
+      },
+      
+      capsuleSize: {
+        type: Number,
+        value: 1,
+      },
+      
+      _capsuleHeight: {
+        type: Number,
+        computed: '_calcCapsuleHeight(capsuleSize)'
+      },
+      
+      _capsuleWidth: {
+        type: Number,
+        computed: '_calcCapsuleWidth(capsuleSize)'
+      },
+      
+      _outlineArc: {
+        type: Number,
+        computed: '_calcOutlineArc(capsuleSize)'
+      },
+      
+      _fillArc: {
+        type: Number,
+        computed: '_calcFillArc(capsuleFillPercent, _outlineArc)'
+      },
+      
+      _outlinePath: {
+        type: String,
+        computed: '_calcOutlinePath(_capsuleHeight, _capsuleWidth, _outlineArc)'
+      },
+      
+      _outlineBellyBandPath: {
+        type: String,
+        computed: '_calcOutlineBellyBandPath(_capsuleWidth)'
+      },
+      
+      _fillPath: {
+        type: String,
+        computed: '_calcFillPath(capsuleFillPercent, _capsuleHeight, _capsuleWidth, _outlineArc, _fillArc)'
+      },
+      
+      _HEIGHT_SCALER: {
+        type: Number,
+        value: 50,
+        readOnly: true
+      },
+      
+      _WIDTH_SCALER: {
+        type: Number,
+        value: 35,
+        readOnly: true
+      },
+      
+      _ARC_SCALER: {
+        type: Number,
+        value: 15,
+        readOnly: true
+      }
+      
+    },
+    
+    _calcCapsuleHeight: function(capSize) {
+      return capSize * this._HEIGHT_SCALER;
+    },
+    
+    _calcCapsuleWidth: function(capSize) {
+      return capSize * this._WIDTH_SCALER;
+    },
+    
+    _calcOutlineArc: function(capSize) {
+      return capSize * this._ARC_SCALER;
+    },
+    
+    _calcFillArc: function(capFill, outlineArc) {
+      var fillArc = 0;
+      if(capFill > 0.8) {
+       fillArc = 100 - (100-outlineArc) * capFill; 
+      } else {
+        fillArc = 120;
+      }
+      return fillArc;
+    },
+    
+    _calcOutlinePath: function(capHeight, capWidth, outArc) {
+      var startPoint = 'M' + (100-capWidth/2) + ',' + (100-capHeight/2);
+      var leftBorder = 'l0,' + capHeight;
+      var bottomArc = 'a' + outArc + ',' + outArc + ',0,0,0,' + capWidth + ',0';
+      var rightBorder = 'l0,-' + capHeight; //notice the negative in the string
+      var topArc = 'a' + outArc + ',' + outArc + ',0,0,0,-' + capWidth + ',0'; //notice the negative in string for capWidth
+      return startPoint + leftBorder + bottomArc + rightBorder + topArc;
+    }, 
+    
+    _calcOutlineBellyBandPath: function(capWidth) {
+      var startPoint = 'M' + (100-capWidth/2) + ',100';
+      var arc = 'a120,120,0,0,0,' + capWidth + ',0';
+      return startPoint + arc;
+    }, 
+    
+    _calcFillPath: function(capFillPercent, capHeight, capWidth, outArc, fillArc) {
+      if(capFillPercent > 0) {
+        var startPoint = 'M' + (100-capWidth/2) + ',' + (100-capHeight/2);
+        var fillStartPoint = 'm0,' + capHeight * (1-capFillPercent);
+        var leftFillBorder = 'l0,' + capHeight * capFillPercent;
+        var bottomArc = 'a' + outArc + ',' + outArc + ',0,0,0,' + capWidth + ',0';
+        var rightFillBorder = 'l0,-' + capHeight * capFillPercent; //notice the negative in the string
+        var topArc = 'a' + fillArc + ',' + fillArc + ',0,0,0,-' + capWidth + ',0'; //notice the negative in the string for width
+        return startPoint + fillStartPoint + leftFillBorder + bottomArc + rightFillBorder + topArc;
+      } else {
+        var blankPoint = 'M' + (100-capWidth/2) + ',' + (100-capHeight/2);
+        return blankPoint;
+      }
+    },
+    
+    ready: function() {
+      this.capsuleSize = 2;
+      this.capsuleFillPercent = 0.76;
+    }
+    
+    
+  });
+
+</script>

@@ -1,0 +1,180 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="dd-sphere-graphic">
+  
+  <style>
+    :host {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      justify-content: center;
+      align-items: center;
+    }
+    
+  </style>
+  
+  <template>
+      
+    <svg id='sphere_svg'></svg>
+      
+  </template>
+  
+</dom-module>
+
+<script>
+
+  Polymer({
+    
+    is: 'dd-sphere-graphic',
+    
+    behaviors: [
+      Polymer.IronResizableBehavior
+    ],
+
+    properties: {
+      
+      /*** The index to highlight ***/
+      layerIndex: {
+        type: Number, 
+        value: 0, 
+        observer: '_updateGraphic'
+      },
+      
+      layerDensity: {
+        type: Number,
+        value: 0.4,
+        observer: '_updateGraphic'
+      },
+      
+      _highlightColor: {
+        type: 'String', 
+        computed: '_calcHighlightColor(layerDensity)'
+      },
+      
+      _height: {
+        type: Number, 
+        value: 200, 
+        observer: '_updateGraphic'
+      },
+      
+      _width: {
+        type: Number,
+        value: 200, 
+        observer: '_updateGraphic'
+      },
+      
+      _centerX: {
+        type: Number, 
+        computed: '_calcCenter(_width)'
+      }, 
+      
+      _centerY: {
+        type: Number,
+        computed: '_calcCenter(_height)'
+      }
+      
+    },
+    
+    listeners: {
+      'iron-resize': '_resize'
+    },
+    
+    _calcCenter: function(x) {
+      return x / 2;
+    },
+    
+    _resize: function() {
+      //this._width = this.offsetWidth;
+    },
+    
+    _updateGraphic: function() {
+      console.log('updating sphere');
+      try {
+        //call _getData to collect all the diameter data from other elements           
+        var diameters = this._getData();
+        
+        //create a color scale to calculate the color of each layer
+        //needs to be a local variable to pass through d3 function
+        //we also set the min and max values based on the diameters showing
+        //this allows us to achieve the most contrast
+        var colorScale = this._colorScale(d3.min(diameters), d3.max(diameters));
+        
+        //we compute the adjusted index because we plot the spheres
+        //in reverse order
+        //need a local version to pass through d3 function calls
+        //do not foget the 1 to adjust for zero index
+        var layerIndex = diameters.length - this.layerIndex - 1;
+        
+        //set the size
+        var svg = d3.select(this.$.sphere_svg)
+                    .style('height', this._height)
+                    .style('width', this._width);
+                    
+        //attach the data and add circles as needed. Filter on index and change color to highlight
+        var circles =  d3.select(this.$.sphere_svg)
+                          .selectAll('circle')
+                          .data(diameters.sort(d3.descending));
+                          
+        //for the circles that already exist we get them and update their diameter               
+        circles.attr('cx', this._centerX)
+                .attr('cy', this._centerY)
+                .attr('r', function(d){return d / 18;})
+                .attr('fill', function(d){return colorScale(d);})
+                .filter(function(d, i){return i === layerIndex;})
+                    .attr('fill', this._highlightColor);                  
+        
+        //if we have more datapoints than circles add circle and style                   
+        circles.enter()
+                .append('circle')
+                .attr('cx', this._centerX)
+                .attr('cy', this._centerY)
+                .attr('r', function(d){return d / 18;})
+                .attr('fill', function(d){return colorScale(d);})
+                .filter(function(d, i){return i === layerIndex;})
+                    .attr('fill', this._highlightColor);
+        
+        //if there are less datapoint than circles delete the layer
+        circles.exit().remove();
+      }
+      catch(err) {
+        //console.log('update graphic error')
+      }
+    },
+    
+  //helper function and values 
+    _colorScale: function(minValue, maxValue) {
+      return  d3.scale
+                .linear()
+                .domain([minValue, maxValue])
+                .range(["#B6B6B6", "#727272"]);
+    }, 
+    
+    _calcHighlightColor: function(dens) {
+      //create a d3 color scale for the highlight blue color
+      //the color will change depending on the layer density
+      var blueScale = d3.scale
+                        .linear()
+                        .domain([0, 3])
+                        .range(["#7986CB", "#3949AB"]);
+      return blueScale(dens);
+    },
+    
+    _getData: function() {
+      //empty array to hold our values
+      var diameters = [ 650, 705, 900];
+      
+      return diameters
+    },
+    
+  });
+</script>
