@@ -14,62 +14,69 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   // and give it some initial binding values
   // Learn more about auto-binding templates at http://goo.gl/Dx1u2g
   var app = document.querySelector('#app');
-
+  //create the default coating pages to show
+  app.pages = [
+    {
+      pageName: "DrugLayering", 
+      pageTitle: "Drug Layering",
+      productTitle: "Opadry 03K",
+    },
+    {
+      pageName: "SealCoating", 
+      pageTitle: "Seal Coating",
+      productTitle: "Opadry YS-1",
+    },
+    {
+      pageName: "FunctionalCoating", 
+      pageTitle: "Functional Coating",
+      productTitle: "Acryleze II",
+    }
+  ];
+  //store a coating layer index for create new pages
+  app.coatingLayerNumber = 0;
+    
   app.displayInstalledToast = function() {
     document.querySelector('#caching-complete').show();
   };
 
   // See https://github.com/Polymer/polymer/issues/1381
-  window.addEventListener('dd-open-page', function() {
-    console.log('You shall open.... a page');
+  window.addEventListener('WebComponentsReady', function() {
     // imports are loaded and elements have been registered
+    
   });
 
   // Close drawer after menu item is selected if drawerPanel is narrow
-  app._closeDrawer = function() {
+  app._onMenuItemSelected = function() {
     var drawerPanel = document.querySelector('#paperDrawerPanel');
     if (drawerPanel.narrow) {
       drawerPanel.closeDrawer();
     }
-  };
-  // Close drawer after menu item is selected if drawerPanel is narrow
-  app._openDdPage = function(event) {//fall function to close drawer if open
-    app._closeDrawer();
-    //page is defined in routing.html. 
-    //the function there will update the route to show the right page
-    page('/DosageDesigner');
-  };
-  
-  // Open the core subsrate page if chip or menu item selected
-  app._openCorePage = function(event) {
-    //fall function to close drawer if open
-    app._closeDrawer();
-    //page is defined in routing.html. 
-    //the function there will update the route to show the right page
-    page('/DosageDesigner/CoreSubstrate');
+    
+    console.log('fired menu selected');
+    
+    var pagePath = '/DosageDesigner/';
+    
+    if(this.currentPage != 'DosageDesigner'){
+      pagePath = pagePath + this.currentPage;
+      page(pagePath);
+    } else {
+      page(pagePath);
+    }
+    
   };
   
-  // Open the capsule  page if chip or menu item selected
-  app._openCapsulePage = function(event) {
-    //fall function to close drawer if open
-    app._closeDrawer();
-    //page is defined in routing.html. 
-    //the function there will update the route to show the right page
-    page('/DosageDesigner/Capsule');
-  };
-  
-  // When chip or menu item is selected we open the coating page
-  app._openCoatingPage = function(event) {
-    //fall function to close drawer if open
-    app._closeDrawer();
-    //first we get the item number and parse out the spaces
-    var path = event.model.item.replace(/\s+/g, '');
-    //combine to create the path to change page too
-    var coatingPath = '/DosageDesigner/' + path;
-    //page is defined in routing.html. 
-    //the function there will update the route to show the right page
-    page(coatingPath);
-    event.stopPropagation();
-  };
+  app._addPage = function() {
+    //we store the layer index and always increment by one
+    app.coatingLayerNumber++;
+    //combine with CoatingLayer to create a page path
+    var newPageName = 'CoatingLayer' + app.coatingLayerNumber;
+    var temp = {
+                  pageName: newPageName, 
+                  pageTitle: "Coating Layer",
+                  productTitle: "Opadry 03K"
+                };
+    //use polymer array api to push and notify of changes            
+    app.push('pages', temp);
+  }
 
 })(document);

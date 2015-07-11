@@ -68,40 +68,34 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </paper-toolbar>
 
         <!-- Drawer Content -->
-          <paper-menu class="list" attr-for-selected="data-route" selected="{{route}}" on-iron-select="_closeDrawer">
-            <paper-item data-route="Dosage Designer" on-tap="_openDdPage">
+          <paper-menu class="list" attr-for-selected="page-name" selected="{{currentPage}}" on-iron-select="_onMenuItemSelected">
+            
+            <paper-item page-name="DosageDesigner">
               <iron-icon icon="icons:home"></iron-icon>
               <span>Dosage Designer</span>
             </paper-item>
             
-            <paper-item data-route="Core Substrate"  on-tap='_openCorePage'>
+            <paper-item page-name="CoreSubstrate">
               <iron-icon icon="maps:local-bar"></iron-icon>
               <span>Core Substrate</span>
             </paper-item>
             
+            <template is='dom-repeat' items='{{pages}}'>
+              <paper-item page-name$="{{item.pageName}}">
+                <iron-icon icon="maps:local-laundry-service"></iron-icon>
+                <span>{{item.pageTitle}}</span>
+              </paper-item>
+            </template>
             
-            <paper-item data-route="Drug Layering"  on-tap='_openCoatingPage'>
-              <iron-icon icon="maps:local-laundry-service"></iron-icon>
-              <span>Drug Layering</span>
-            </paper-item>
-            
-            <paper-item data-route="Seal Coating"  on-tap='_openCoatingPage'>
-              <iron-icon icon="maps:local-laundry-service"></iron-icon>
-              <span>Seal Coating</span>
-            </paper-item>
-            
-            <paper-item data-route="Functional Coating"  on-tap='_openCoatingPage'>
-              <iron-icon icon="maps:local-laundry-service"></iron-icon>
-              <span>Functional Coating</span>
-            </paper-item>
-            
-            <paper-item data-route="Capsule" on-tap='_openCapsulePage'>
-              <iron-icon icon="maps:local-pizza"></iron-icon>
+            <paper-item page-name="Capsule">
+              <iron-icon icon="maps:local-bar"></iron-icon>
               <span>Capsule</span>
             </paper-item>
+            
           </paper-menu>
       </div>
-      <paper-header-panel main mode="waterfall-tall">
+      
+      <paper-header-panel id='paperHeaderPanel' main mode="waterfall-tall">
 
         <!-- Main Toolbar -->
         <paper-toolbar id="mainToolbar">
@@ -121,67 +115,157 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </paper-toolbar>
 
         <!-- Main Content -->
-        <div class="content">
+        <neon-animated-pages attr-for-selected='page-name' selected='{{currentPage}}'>
           
-          <neon-animated-pages id='pages' attr-for-selected='data-route' selected='{{route}}'>
-            
-            <div data-route='Dosage Designer' class='layout horizotnal wrap center'>
-
-              <dd-coating-chip >
-                <div class='title-text'>Starting Material</div>
-                <div class='subtitle-text'>Suglets 20/25</div>
+          <div id='dosageDesignerPage' page-name='DosageDesigner'>
+            <dd-coating-chip page-name='CoreSubstrate' no-close>
+              <div class='title-text'>Core Substrate</div>
+              <div class='subtitle-text'>Suglets 20/25</div>
+            </dd-coating-chip>
+            <template is='dom-repeat' items='{{pages}}'>
+              <dd-coating-chip page-name$='{{item.pageName}}'>
+                <div class='title-text'>{{item.pageTitle}}</div>
+                <div class='subtitle-text'>{{item.productTitle}}</div>
               </dd-coating-chip>
-              
-              <dd-coating-chip >
-                <div class='title-text'>Drug Layering</div>
-                <div class='subtitle-text'>Opadry 03A</div>
-              </dd-coating-chip>
-              
-              <dd-coating-chip >
-                <div class='title-text'>Seal Coating</div>
-                <div class='subtitle-text'>Opadry 03A</div>
-              </dd-coating-chip>
-              
-              <dd-coating-chip >
-                <div class='title-text'>Functional Coating</div>
-                <div class='subtitle-text'>Surelease</div>
-              </dd-coating-chip>
-              
-              <dd-coating-chip >
-                <div class='title-text'>Capsule</div>
-                <div class='subtitle-text'>Size #2</div>
-              </dd-coating-chip>
-
-            </div>
-            
-            <div data-route='Core Substrate'>
-              Core Substrate
-            </div>
-            
-            <div data-route='Drug Layering'>
-              Drug Layering
-            </div>
-            
-            <div data-route='Seal Coating'>
-              Seal Coating
-            </div>
-            
-            <div data-route='Functional Coating'>
-              Functional Coating
-            </div>
-            
-            <div data-route='Capsule'>
-              Capsule
-            </div>
-            
-            
-          </neon-animated-pages>
+            </template>
+            <dd-coating-chip page-name='Capsule' no-close>
+              <div class='title-text'>Capsule</div>
+              <div class='subtitle-text'>Size #2</div>
+            </dd-coating-chip>
+            <paper-fab icon='icons:add' on-tap='_addPage'></paper-fab>
+          </div>
           
-          
-          
-          
-        </div>
+          <dd-dashboard-page page-name='CoreSubstrate'>
+            
+            <div id='coreSelection' class='selection mdl-card__title'>
+              <div class='mdl-card__title-text'>Suglets 20/25</div>
+            </div>
+            
+            <div class='input_title'>Pre-coated Particle</div>
+            
+            <div class='inputs'>
+              <dd-slider-input val=' '>
+                <div class='title'>Product Code</div>
+                <div class='units'></div>
+                <div class='description'>
+                  The Colorcon product code.
+                </div>
+              </dd-slider-input>
               
+              <dd-slider-input val=''>
+                <div class='title'>Micron Range</div>
+                <div class='units'>&mu;m</div>
+                <div class='description'>
+                  The equivalent micron range for this grade.
+                </div>
+              </dd-slider-input>
+              
+              <dd-slider-input val='{{diameter}}' decimals='1' min='150' max='2400' active>
+                <div class='title'>Diameter</div>
+                <div class='units'>&mu;m</div>
+                <div class='description'>
+                  The mean diameter of the starting particle.
+                </div>
+              </dd-slider-input>
+              
+              <dd-slider-input val='{{assay}}' decimals='2' min='0' max='1000' active hide>
+                <div class='title'>Assay</div>
+                <div class='units'>mg/g</div>
+                <div class='description'>
+                  The starting assay of the core substrate in mg per gram of beads. This is typically zero
+                  but in the case of custom granulation or ext/sphereonization the particle may contain
+                  the active pharmaceutical ingredient.
+                </div>
+              </dd-slider-input>
+              
+              <dd-slider-input val='{{apparentDensity}}' decimals='2' min='0.5' max='3' active>
+                <div class='title'>Apparent Density</div>
+                <div class='units'>g/ml</div>
+                <div class='description'>
+                  The apparent density of the starting core substrate. This apparent denisty includes the porosity of the material
+                  but not the void space between particles.
+                </div>
+              </dd-slider-input>              
+            </div>
+            
+            <div class='output_title'>Coated Particle</div>
+              
+            <div class='outputs'>
+              <dd-slider-input val='[[radius]]' decimals='2' hide icon='icons:assessment'>
+                <div class='title'>Radius</div>
+                <div class='units'>&mu;m</div>
+                <div class='description'>
+                  The mean particles starting radius in microns.
+                </div>
+              </dd-slider-input>
+              
+              <dd-slider-input val='[[surfaceArea]]' decimals='4' hide icon='icons:assessment'>
+                <div class='title'>Surface Area</div>
+                <div class='units'>cm<sup>2</sup></div>
+                <div class='description'>1
+                  The surface area of a single sphere with the a <span>{{core.diameter}}</span> 
+                  &mu;m diameter.
+                </div>
+              </dd-slider-input>
+              
+              <dd-slider-input val='[[volume]]' decimals='4' hide icon='icons:assessment'>
+                <div class='title'>Volume</div>
+                <div class='units'>ml</div>
+                <div class='description'>
+                  The volume of a single sphere with the a <span>{{core.diameter}}</span> 
+                  &mu;m diameter.
+                </div>
+              </dd-slider-input>
+              
+              <dd-slider-input val='[[surfaceAreaToVolume]]' decimals='4' hide icon='icons:assessment'>
+                <div class='title'>SA to Volume</div>
+                <div class='units'>ml</div>
+                <div class='description'>
+                  The surface area to volume ratio of a single sphere with the a <span>{{core.diameter}}</span> 
+                  &mu;m diameter. This is value is of interest to understand why a batch of small particles have 
+                  a significantly larger amount of total surface area.
+                </div>
+              </dd-slider-input>
+              
+              <dd-slider-input val='[[particleCount]]' decimals='0' icon='icons:assessment'>
+                <div class='title'>Particle Count</div>
+                <div class='units'>count/g</div>
+                <div class='description'>
+                  The mean particles starting radius in microns.
+                </div>
+              </dd-slider-input>
+              
+              <dd-slider-input val='[[totalSurfaceArea]]' decimals='4' icon='icons:assessment'>
+                <div class='title'>Total Surface Area</div>
+                <div class='units'>cm<sup>2</sup>/g</div>
+                <div class='description'>
+                  The surface area of a single sphere with the a <span>{{core.diameter}}</span> 
+                  &mu;m diameter.
+                </div>
+              </dd-slider-input>
+              
+              <dd-slider-input val='[[bulkDensity]]' decimals='2' icon='icons:assessment'>
+                <div class='title'>Bulk Density</div>
+                <div class='units'>g/ml</div>
+                <div class='description'>
+                  The estimated bulk density of the starting substrate. The estimtion is based on the optimal packing conditions
+                  of a sphereical particles of 74.048% of the apparent density of beads.
+                </div>
+              </dd-slider-input>
+            </div>
+          </dd-dashboard-page>
+          
+          <template is='dom-repeat' items='{{pages}}'>
+            <div page-name$='{{item.pageName}}'>
+              <span>{{item.pageTitle}}</span>
+              <div>{{item.pageName}}</div>
+            </div>
+          </template>
+          
+          <div page-name='Capsule'>
+            <span>Capsule</span>
+          </div>
+        </neon-animated-pages>
       </paper-header-panel>
     </paper-drawer-panel>
 

@@ -16,24 +16,34 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     // client-side router inspired by the Express router
     // More info: https://visionmedia.github.io/page.js/
     page('/', function () {
-      app.route = 'Dosage Designer';
+      //we set the page with a short toolbar
+      document.querySelector('#paperHeaderPanel').mode = 'waterfall-tall';
+      app.currentPage = 'DosageDesigner';
     });
 
     page('/DosageDesigner', function () {
-      app.route = 'Dosage Designer';
+      //we set the page with a tall toolbar
+      document.querySelector('#paperHeaderPanel').mode = 'waterfall-tall';
+      app.currentPage = 'DosageDesigner';
     });
     
     page('/DosageDesigner/CoreSubstrate', function () {
-      app.route = 'Core Substrate';
+      //we set the page with a short toolbar
+      document.querySelector('#paperHeaderPanel').mode = 'standard';
+      app.currentPage = 'CoreSubstrate';
     });
     
     page('/DosageDesigner/Capsule', function () {
-      app.route = 'Capsule';
+      //we set the page with a short toolbar
+      document.querySelector('#paperHeaderPanel').mode = 'standard';
+      app.currentPage = 'Capsule';
     });
     
     page('/DosageDesigner/:coating', function (data) {
-      var pageName = data.params.coating.replace(/([a-z])([A-Z])/g, '$1 $2');
-      app.set('route', pageName);
+      //we set the page with a short toolbar
+      document.querySelector('#paperHeaderPanel').mode = 'standard';
+      //use the polymer set API to trigger notifiers
+      app.set('currentPage', data.params.coating);
     });
 
     // add #! before urls
