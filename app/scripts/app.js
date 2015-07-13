@@ -50,19 +50,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     var drawerPanel = document.querySelector('#paperDrawerPanel');
     if (drawerPanel.narrow) {
       drawerPanel.closeDrawer();
-    }
-    
-    console.log('fired menu selected');
-    
+    } 
     var pagePath = '/DosageDesigner/';
-    
     if(this.currentPage != 'DosageDesigner'){
       pagePath = pagePath + this.currentPage;
       page(pagePath);
     } else {
       page(pagePath);
     }
-    
   };
   
   app._addPage = function() {

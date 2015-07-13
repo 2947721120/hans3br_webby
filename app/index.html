@@ -15,7 +15,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <meta charset="utf-8">
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="generator" content="Polymer Starter Kit" />
+  <meta name="generator" content="Polymer Starter Kit" ></dd-slider-input>
   <title>Webby Sphere Dashboard</title>
   <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
 
@@ -135,125 +135,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <paper-fab icon='icons:add' on-tap='_addPage'></paper-fab>
           </div>
           
-          <dd-dashboard-page page-name='CoreSubstrate'>
-            
-            <div id='coreSelection' class='selection mdl-card__title'>
-              <div class='mdl-card__title-text'>Suglets 20/25</div>
-            </div>
-            
-            <div class='input_title'>Pre-coated Particle</div>
-            
-            <div class='inputs'>
-              <dd-slider-input val=' '>
-                <div class='title'>Product Code</div>
-                <div class='units'></div>
-                <div class='description'>
-                  The Colorcon product code.
-                </div>
-              </dd-slider-input>
-              
-              <dd-slider-input val=''>
-                <div class='title'>Micron Range</div>
-                <div class='units'>&mu;m</div>
-                <div class='description'>
-                  The equivalent micron range for this grade.
-                </div>
-              </dd-slider-input>
-              
-              <dd-slider-input val='{{diameter}}' decimals='1' min='150' max='2400' active>
-                <div class='title'>Diameter</div>
-                <div class='units'>&mu;m</div>
-                <div class='description'>
-                  The mean diameter of the starting particle.
-                </div>
-              </dd-slider-input>
-              
-              <dd-slider-input val='{{assay}}' decimals='2' min='0' max='1000' active hide>
-                <div class='title'>Assay</div>
-                <div class='units'>mg/g</div>
-                <div class='description'>
-                  The starting assay of the core substrate in mg per gram of beads. This is typically zero
-                  but in the case of custom granulation or ext/sphereonization the particle may contain
-                  the active pharmaceutical ingredient.
-                </div>
-              </dd-slider-input>
-              
-              <dd-slider-input val='{{apparentDensity}}' decimals='2' min='0.5' max='3' active>
-                <div class='title'>Apparent Density</div>
-                <div class='units'>g/ml</div>
-                <div class='description'>
-                  The apparent density of the starting core substrate. This apparent denisty includes the porosity of the material
-                  but not the void space between particles.
-                </div>
-              </dd-slider-input>              
-            </div>
-            
-            <div class='output_title'>Coated Particle</div>
-              
-            <div class='outputs'>
-              <dd-slider-input val='[[radius]]' decimals='2' hide icon='icons:assessment'>
-                <div class='title'>Radius</div>
-                <div class='units'>&mu;m</div>
-                <div class='description'>
-                  The mean particles starting radius in microns.
-                </div>
-              </dd-slider-input>
-              
-              <dd-slider-input val='[[surfaceArea]]' decimals='4' hide icon='icons:assessment'>
-                <div class='title'>Surface Area</div>
-                <div class='units'>cm<sup>2</sup></div>
-                <div class='description'>1
-                  The surface area of a single sphere with the a <span>{{core.diameter}}</span> 
-                  &mu;m diameter.
-                </div>
-              </dd-slider-input>
-              
-              <dd-slider-input val='[[volume]]' decimals='4' hide icon='icons:assessment'>
-                <div class='title'>Volume</div>
-                <div class='units'>ml</div>
-                <div class='description'>
-                  The volume of a single sphere with the a <span>{{core.diameter}}</span> 
-                  &mu;m diameter.
-                </div>
-              </dd-slider-input>
-              
-              <dd-slider-input val='[[surfaceAreaToVolume]]' decimals='4' hide icon='icons:assessment'>
-                <div class='title'>SA to Volume</div>
-                <div class='units'>ml</div>
-                <div class='description'>
-                  The surface area to volume ratio of a single sphere with the a <span>{{core.diameter}}</span> 
-                  &mu;m diameter. This is value is of interest to understand why a batch of small particles have 
-                  a significantly larger amount of total surface area.
-                </div>
-              </dd-slider-input>
-              
-              <dd-slider-input val='[[particleCount]]' decimals='0' icon='icons:assessment'>
-                <div class='title'>Particle Count</div>
-                <div class='units'>count/g</div>
-                <div class='description'>
-                  The mean particles starting radius in microns.
-                </div>
-              </dd-slider-input>
-              
-              <dd-slider-input val='[[totalSurfaceArea]]' decimals='4' icon='icons:assessment'>
-                <div class='title'>Total Surface Area</div>
-                <div class='units'>cm<sup>2</sup>/g</div>
-                <div class='description'>
-                  The surface area of a single sphere with the a <span>{{core.diameter}}</span> 
-                  &mu;m diameter.
-                </div>
-              </dd-slider-input>
-              
-              <dd-slider-input val='[[bulkDensity]]' decimals='2' icon='icons:assessment'>
-                <div class='title'>Bulk Density</div>
-                <div class='units'>g/ml</div>
-                <div class='description'>
-                  The estimated bulk density of the starting substrate. The estimtion is based on the optimal packing conditions
-                  of a sphereical particles of 74.048% of the apparent density of beads.
-                </div>
-              </dd-slider-input>
-            </div>
-          </dd-dashboard-page>
+          <dd-core-dashboard page-name='CoreSubstrate'></dd-core-dashboard>
           
           <template is='dom-repeat' items='{{pages}}'>
             <div page-name$='{{item.pageName}}'>
@@ -268,6 +150,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </neon-animated-pages>
       </paper-header-panel>
     </paper-drawer-panel>
+    
+    <paper-dialog id='detailDialog' modal>
+      <h2 class='mdl-card__title-text'>{{_detailDialogTitle}}</h2>
+      <div class='mdl-card__supporting-text'>{{_detailDialogText}}</div>
+      <div class='layout horizontal center'>
+        <div class='flex'></div>
+        <button class="mdl-button mdl-js-button mdl-js-ripple-effect"dialog-confirm>
+          Okay
+        </button>
+      </div>
+    </paper-dialog>
 
     <paper-toast id="caching-complete"
                  duration="6000"
@@ -288,6 +181,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <!-- build:js scripts/app.js -->
   <script type="text/javascript" src="bower_components/d3/d3.min.js"></script>
   <script src="scripts/app.js"></script>
+  <script src="scripts/text.js"></script>
   <!-- endbuild-->
 </body>
 

@@ -16,27 +16,25 @@ a title and description which collapses on click
       margin-right: 16px;
     }
     
-    iron-collapse {
-      margin: 0px 24px 12px 24px;
-      text-align: justify;
-    }
-    
     paper-icon-button {
       --iron-icon-width: 18px;
-      --iron-icon-height: 18px
+      --iron-icon-height: 18px;
     }
     
     input[type=number] {
+      max-width: 64px;
       font: inherit;
       color: inherit;
       border: none;
       background: inherit;
       text-align: right;
+      margin-right: 6px;
     }
     
     input:focus {
       outline: none;
-      border-bottom: 1px solid white;
+      border-bottom: 1px solid;
+      border-color: var(--accent-color);
     }
     
     /* remove the input arrows that show up in webkit browsers when using numeric input*/
@@ -47,72 +45,38 @@ a title and description which collapses on click
       margin: 0;
     }
     
+    ::content .description {
+      display: none;
+    }
+    
+    
   </style>
   
   <template>
       
-    <paper-item class='layout horizontal center mdl-card__subtitle-text'>
+    <paper-item class='layout horizontal center mdl-card__subtitle-text' disabled$='{{hide}}'>
       
-      <paper-icon-button icon='icons:info-outline' hidden$='{{selectMode}}' on-tap='toggleDetails'></paper-icon-button>
+      <paper-icon-button icon='icons:info-outline' hidden$='{{selectMode}}' on-tap='_onInfoButtonTap'></paper-icon-button>
       
       <paper-checkbox id='hidebox' on-change='_toggleHide' hidden$='{{!selectMode}}'></paper-checkbox>
       
-      <div class='flex'>
-        <content select='.title'></content>
-      </div>
+      <div class='flex'>{{title}}</div>
       
-        
       <input  
         id='put'
+        class="mdl-textfield__input"
+        on-change='_onInput'
         type='number'
         max='{{max}}'
         min='{{min}}'
-        step='{{step}}'
-        disabled='{{!active}}'
-        maxlength='5'>
+        step='{{_step}}'>
       </input>
       
-      <content select='.units'></content>
+      <div>{{units}}</div>
       
     </paper-item>
     
-    <iron-collapse id='collapse'>
-      
-      <div class='mdl-card__supporting-text'>
-        <content select='.description'></content>
-      </div>
-      
-        
-      <div class='horizontal layout center' hidden$='{{!active}}'>
-
-        <paper-icon-button 
-            icon='icons:remove-circle-outline' 
-            on-tap='removeStep'>
-        </paper-icon-button>
-      
-        <paper-slider 
-            id='slid'
-            min='{{min}}'
-            max='{{max}}'
-            step='{{step}}'
-            class='flex'>
-        </paper-slider>
-                      
-        <paper-icon-button 
-            icon='icons:add-circle-outline' 
-            on-tap='addStep'>
-        </paper-icon-button>
-        
-      </div>
-      
-      <content></content>
-      
-    </iron-collapse>
-    
-    <paper-toast 
-        id='toast' 
-        text="Value must be between {{min}} and {{max}}">
-    </paper-toast>
+    <paper-toast id='toast' text='{{_toastText}}'></paper-toast>
     
   </template>
   
@@ -125,6 +89,21 @@ a title and description which collapses on click
     
     properties: {
       
+      title: {
+        type: String,
+        value: "Title Goes Here",
+      },
+      
+      units: {
+        type: String,
+        value: ''
+      },
+      
+      details: {
+        type: String,
+        value: ''
+      },
+      
       selectMode: {
         type: Boolean,
         value: false, 
@@ -134,13 +113,14 @@ a title and description which collapses on click
       hide: {
         type: Boolean, 
         value: false,
+        observer: '_hideChanged'
       },
       
       val: {
         type: Number, 
         value: 50,
-        observer: '_valChanged',
-        notify: true
+        notify: true,
+        observer: '_valChanged'
       },
       
       min: {
@@ -158,38 +138,49 @@ a title and description which collapses on click
         value: 1,
       },
       
-      step: {
+      _step: {
         type: Number,
         computed: '_computeStep(decimals)'
       },
       
-      active: {
-        type: Boolean,
-        value: false
+      toastText: {
+        type: String,
+        computed: '_computeToastText(min, max)'
       }
+      
     },
     
     ready: function() {
-      this._valChanged(this.val);
-      //set the checkbox to the correct state
-      //this will depend if the hide attribute is used or not
       this.$.hidebox.checked = !this.hide;
-      if(this.hide) {
-        this.style.opacity = 0.4;
-        this.style.display = 'none';
+    },
+    
+    _valChanged: function(newValue, oldValue) {
+      //we use the if else in case the script runs before the decimal variable is defined
+      if(this.decimals) {
+        var decimalFactor = Math.pow(10, this.decimals);
+        this.$.put.value = Math.round(newValue * decimalFactor) / decimalFactor;
+      } else {
+        this.$.put.value = newValue
       }
     },
     
-    listeners: {
-      'change': '_userInput',
-      'immediate-value-change': '_sliderInput'
+    _onInput: function(e) {
+      if(e.target.value < this.min){
+        this.val = this.min;  
+        this.$.toast.show();
+      } else if (e.target.value > this.max){
+        this.val = this.max; 
+        this.$.toast.show();
+      } else {
+        this.val = e.target.value;
+      }
+    },
+    
+    _hideChanged: function() {
+      this.toggleAttribute('hidden', this.hide);
     },
     
     _toggleSelectMode: function(newValue, oldValue) {
-      //close the detail view if open
-      //for some reason hide() is not working so we check it state and toggle().
-      if(this.$.collapse.opened) {this.$.collapse.toggle();}
-      
       if(newValue) {
         //If we are in select mode we want to show all elements regardless if they
         //are currently selected as hidden
@@ -206,66 +197,19 @@ a title and description which collapses on click
     _toggleHide: function(event) {
       //we set the hide attribute to the oppostie of the checked state
       this.hide = !this.$.hidebox.checked;
-      //when in select mode we want to use low opacity to hightlight not selected
-      if(this.hide) {
-        //when select mode is choosen font will show with low opacity
-        this.style.opacity = 0.4;
-      } else {
-        //reset opacity for normal display
-        this.style.opacity = 1;
-      }
       event.stopPropagation();
     },
     
-    /**called to visually show the value that is being selected
-     * the actual value will be checked and set when userInput is called
-     * with the on-change event
-     */
-    _sliderInput: function() {
-      this.val = this.$.slid.immediateValue;
-    },
-    
-    toggleDetails: function() {
-      this.$.collapse.toggle();
-    },
-  
-    _valChanged: function(newValue, oldValue) {
-      this.$.put.value = Number(newValue).toFixed(this.decimals);
-      this.$.slid.value = Number(newValue).toFixed(this.decimals);
-      this.fire('dd-slider-input-changed');
-    },
-    
-    _userInput: function(e){
-      if(e.target.value < this.min){
-        this.val = this.min;  
-        this.$.toast.show();
-      } else if (e.target.value > this.max){
-        this.val = this.max; 
-        this.$.toast.show();
-      } else {
-        this.val = e.target.value;
-      }
+    _onInfoButtonTap: function() {
+      this.fire('dd-detail-dialog', {descText: this.details});
     },
     
     _computeStep: function(dec) {
       return 1 / Math.pow(10, dec);
     },
     
-    addStep: function() {
-      if(this.val < this.max){
-        //for some reason when just adding step it causes and error so we subtract (1) and add (2).
-       var temp = this.val - this.step + 2 * this.step;  
-       this.val = Number(temp).toFixed(this.decimals); //fires val observer
-      }
-    },
-  
-    //remove a vale when the button is clicked
-    //needs to be universal as the slider is updated for different inputs
-    removeStep: function() {
-      if(this.val > this.min){
-        var temp = this.val - this.step;
-        this.val = Number(temp).toFixed(this.decimals);  //fire val observer
-      }
+    _computeToastText: function(min, max) {
+      return 'Value must be between ' + min + ' and ' + max + '.';
     }
     
 });

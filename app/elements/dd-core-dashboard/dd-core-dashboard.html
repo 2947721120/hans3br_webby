@@ -1,0 +1,224 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="dd-core-dashboard">
+  
+  <style is='custom-style'>
+    :host {
+      display: block;
+    }
+    
+    paper-toolbar {
+      color: inherit;
+      background-color: inherit;
+    }
+    
+    div.mdl-cell {
+      background: #fff;
+      min-height: 324px;
+      overflow: auto;
+    }
+    
+    #productSelectionCard {
+      background-image: url('../../images/SUGLETS-Page.jpg');
+      background-size: cover;
+    }
+  </style>
+  
+  <template>
+    
+    <div class='mdl-grid'>
+      
+      <div id='productSelectionCard' class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--3-col mdl-cell--top'>
+        <div class='mdl-card__title'>
+          <h5 class='mdl-card__title-text'>Suglets 20/25</h5>
+        </div>
+      </div>
+      
+      <div class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-cell--top'>
+        <div class='mdl-card__title'>
+          <h5 class='mdl-card__title-text'>Particle Details</h5>
+        </div>
+        <div class='inputs'>
+          <dd-slider-input 
+            val=' '
+            title='Product Code'
+            units=''
+            details='The Colorcon product code.'></dd-slider-input>
+          
+          <dd-slider-input 
+            val=''
+            title='Micron Range'
+            units='&mu;m'
+            details='The equivalent micron range for this grade.'></dd-slider-input>
+          
+          <dd-slider-input 
+            val='{{diameter}}' 
+            decimals='1' 
+            min='150' 
+            max='2400'
+            title='Mean Diameter'
+            units='&mu;m'
+            details='The mean diameter of the starting particle.'></dd-slider-input>
+          
+          <dd-slider-input 
+            val='{{assay}}' 
+            decimals='2' 
+            min='0' 
+            max='1000' 
+            title='Assay'
+            units='mg/g'
+            details='The starting assay of the core substrate in mg per gram of beads. This is typically zero
+              but in the case of custom granulation or ext/sphereonization the particle may contain
+              the active pharmaceutical ingredient.'></dd-slider-input>
+          
+          <dd-slider-input 
+            val='{{apparentDensity}}' 
+            decimals='2' 
+            min='0.5' 
+            max='3'
+            title='Apparent Density'
+            units='g/ml'
+            details='The apparent density of the starting core substrate. This apparent denisty includes the porosity of the material
+              but not the void space between particles.'></dd-slider-input>
+        </div>
+      </div>
+      
+      <div class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-cell--top'>
+        <div class='mdl-card__title'>
+          <h5 class='mdl-card__title-text'>Theoretical Details</h5>
+        </div>
+        <div class='outputs'>
+          <dd-slider-input 
+            val='[[radius]]' 
+            decimals='2' 
+            title='Radius'
+            units='&mu;m'
+            details='The mean particles starting radius in microns.'></dd-slider-input>
+          
+          <dd-slider-input 
+            val='[[surfaceArea]]' 
+            decimals='4' 
+            title='Surface Area'
+            units='cm^2'
+            details='The surface area of a single sphere with the a <span>{{core.diameter}}</span> 
+              &mu;m diameter.'></dd-slider-input>
+          
+          <dd-slider-input 
+            val='[[volume]]' 
+            decimals='4' 
+            title='Volume'
+            units='ml'
+            details='The volume of a single sphere with the a <span>{{core.diameter}}</span> 
+              &mu;m diameter.'></dd-slider-input>
+          
+          <dd-slider-input 
+            val='[[surfaceAreaToVolume]]' 
+            decimals='4' 
+            title='SA to Volume'
+            units='ml'
+            details='The surface area to volume ratio of a single sphere with the a <span>{{core.diameter}}</span> 
+              &mu;m diameter. This is value is of interest to understand why a batch of small particles have 
+              a significantly larger amount of total surface area.'></dd-slider-input>
+          
+          <dd-slider-input 
+            val='[[particleCount]]' 
+            decimals='0'
+            title='Particle Count'
+            units='count/g'
+            details='The mean particles starting radius in microns.'></dd-slider-input>
+          
+          <dd-slider-input 
+            val='[[totalSurfaceArea]]' 
+            decimals='2'
+            title='Total Surface Area'
+            units='cm^2/g'
+            details='The surface area of a single sphere with 
+              the a <span>{{core.diameter}}</span> &mu;m diameter.'></dd-slider-input>
+          
+          <dd-slider-input 
+            val='[[bulkDensity]]' 
+            decimals='2' 
+            title='Bulk Density'
+            units='g/ml'
+            details='The estimated bulk density of the starting 
+              substrate. The estimtion is based on the optimal packing conditions
+              of a sphereical particles of 74.048% of the 
+              apparent density of beads.'></dd-slider-input>
+        </div>
+      </div>
+      
+      <div class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-cell--top'>
+        <div class='mdl-card__title'>
+          <h5 class='mdl-card__title-text'>Coated Particle</h5>
+        </div>
+        <dd-sphere-graphic></dd-sphere-graphic>
+      </div>
+      
+      <div class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-cell--top'>
+        <div class='mdl-card__title'>
+          <h5 class='mdl-card__title-text'>Capsule Details</h5>
+        </div>
+        <dd-capsule-graphic
+          capsule-fill-percent='0.4'
+          capsule-size='5'></dd-capsule-graphic>
+      </div>
+      
+      <div class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--8-col'>
+        <div class='mdl-card__title'>
+          <h5 class='mdl-card__title-text'>Summary Table</h5>
+        </div>
+        <div></div>
+      </div>
+      
+    </div>
+    
+  </template>
+  
+</dom-module>
+
+<script>
+  Polymer({
+    
+    is: 'dd-core-dashboard',
+    
+    behaviors: [
+      DosageDesignerSphereBehavior
+    ],
+
+    properties: {
+      
+      _detailDialogTitle: {
+        type: String,
+        value: 'Details',
+        readyOnly: true
+      },
+      
+      _detailDialogText: {
+        type: String,
+        value: 'Details go here...',
+        readyOnly: true
+      }
+      
+    },
+    
+    listeners: {
+      'dd-input-info-dialog': '_openDetailsDialog'  
+    },
+    
+    _openDetailsDialog: function(e) {
+      
+      this.$.detailDialog.toggle();
+    }
+    
+  });
+</script>
