@@ -14,19 +14,43 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   
   <style>
     :host {
-      display: flex;
-      flex-direction: column;
-      flex-grow: 1;
-      justify-content: center;
-      align-items: center;
+    }
+    
+    paper-icon-button {
+      color: var(--disabled-text-color);
+      --iron-icon-height: 18px;
+      --iron-icon-width: 18px;
+    }
+    
+    paper-icon-button.iron-selected {
+      color: var(--accent-color);
     }
     
   </style>
   
   <template>
+    
+    <div>
       
-    <svg id='sphere_svg'></svg>
+      <div class='mdl-card__title'>
+        <h5 class='mdl-card__title-text'>Coated Particle</h5>
+      </div>
       
+        <div class='layout vertical flex'>
+          <div class='flex layout horizontal center-center'>
+            <svg id='sphere_svg'></svg>
+        </div>
+        
+        <iron-selector class='layout horizontal center-center' selected='{{layerIndex}}'>
+          <template is='dom-repeat' items='{{diameterArray}}'>
+            <paper-icon-button icon='icons:radio-button-checked'></paper-icon-button>
+          </template>
+        </iron-selector>
+        
+      </div>
+      
+    </div>
+    
   </template>
   
 </dom-module>
@@ -42,6 +66,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     ],
 
     properties: {
+      
+      diameterArray: {
+        type: Array,
+        value: 
+          function(){
+            return [650, 705, 900];
+          }
+      },
       
       /*** The index to highlight ***/
       layerIndex: {
@@ -171,8 +203,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     
     _getData: function() {
       //empty array to hold our values
-      var diameters = [ 650, 705, 900];
-      
+      var diameters = this.diameterArray
       return diameters
     },
     

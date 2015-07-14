@@ -13,11 +13,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <dom-module id="dd-capsule-graphic">
   <style is='custom-style'>
     :host {
-      display: flex;
-      flex-direction: column;
-      flex-grow: 1;
-      justify-content: center;
-      align-items: center;
     }
     
     svg {
@@ -36,12 +31,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       fill: var(--default-primary-color);
     }
   </style>
+  
   <template>
-    <svg id='capsule_graphic'>
-      <path class='fill' d$='{{_fillPath}}'></path>
-      <path class='outline' d$='{{_outlinePath}}'/>
-      <path class='outline' d$='{{_outlineBellyBandPath}}'/>
-    </svg>
+    
+    <div>
+      <div class='mdl-card__title'>
+        <h5 class='mdl-card__title-text'>Capsule Details</h5>
+      </div>
+      <div class='flex layout horizontal center-center'>
+        <svg id='capsule_graphic'>
+          <path class='fill' d$='{{_fillPath}}'></path>
+          <path class='outline' d$='{{_outlinePath}}'/>
+          <path class='outline' d$='{{_outlineBellyBandPath}}'/>
+        </svg>
+      </div>
+    </div>
+    
   </template>
 </dom-module>
 <script>

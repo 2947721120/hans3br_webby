@@ -31,7 +31,27 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     #productSelectionCard {
       background-image: url('../../images/SUGLETS-Page.jpg');
       background-size: cover;
+      background-color: lightgray;
+      background-blend-mode: overlay;
+      justify-content: center;
     }
+    
+    #productSelectionCard > .mdl-card__title {
+      flex-direction: column;
+    }
+    
+    #productSelectionCard > .mdl-card__title > h5 {
+      align-self: center;
+    }
+    
+    dd-sphere-graphic {
+      min-height: 324px;
+    }
+    
+    dd-capsule-graphic {
+      min-height: 324px;
+    }
+    
   </style>
   
   <template>
@@ -42,6 +62,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <div class='mdl-card__title'>
           <h5 class='mdl-card__title-text'>Suglets 20/25</h5>
         </div>
+        <div class='mdl-card__title'>
+          <h5 class='mdl-card__subtitle-text'>710 - 850 &mu;m</h5>
+          <h5 class='mdl-card__subtitle-text'>PF010</h5>
+        </div>
       </div>
       
       <div class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-cell--top'>
@@ -49,17 +73,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <h5 class='mdl-card__title-text'>Particle Details</h5>
         </div>
         <div class='inputs'>
-          <dd-slider-input 
-            val=' '
-            title='Product Code'
-            units=''
-            details='The Colorcon product code.'></dd-slider-input>
-          
-          <dd-slider-input 
-            val=''
-            title='Micron Range'
-            units='&mu;m'
-            details='The equivalent micron range for this grade.'></dd-slider-input>
           
           <dd-slider-input 
             val='{{diameter}}' 
@@ -69,6 +82,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             title='Mean Diameter'
             units='&mu;m'
             details='The mean diameter of the starting particle.'></dd-slider-input>
+            
+          <dd-slider-input 
+            hide
+            val='[[radius]]' 
+            decimals='2' 
+            title='Radius'
+            units='&mu;m'
+            details='The mean particles starting radius in microns.'></dd-slider-input>  
           
           <dd-slider-input 
             val='{{assay}}' 
@@ -79,7 +100,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             units='mg/g'
             details='The starting assay of the core substrate in mg per gram of beads. This is typically zero
               but in the case of custom granulation or ext/sphereonization the particle may contain
-              the active pharmaceutical ingredient.'></dd-slider-input>
+              the active pharmaceutical ingredient.'>
+          </dd-slider-input>
           
           <dd-slider-input 
             val='{{apparentDensity}}' 
@@ -89,7 +111,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             title='Apparent Density'
             units='g/ml'
             details='The apparent density of the starting core substrate. This apparent denisty includes the porosity of the material
-              but not the void space between particles.'></dd-slider-input>
+              but not the void space between particles.'>
+          </dd-slider-input>
+              
+           <dd-slider-input 
+            val='[[bulkDensity]]' 
+            decimals='2' 
+            title='Bulk Density'
+            units='g/ml'
+            details='The estimated bulk density of the starting 
+              substrate. The estimtion is based on the optimal packing conditions
+              of a sphereical particles of 74.048% of the 
+              apparent density of beads.'>
+           </dd-slider-input>    
         </div>
       </div>
       
@@ -98,28 +132,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <h5 class='mdl-card__title-text'>Theoretical Details</h5>
         </div>
         <div class='outputs'>
-          <dd-slider-input 
-            val='[[radius]]' 
-            decimals='2' 
-            title='Radius'
-            units='&mu;m'
-            details='The mean particles starting radius in microns.'></dd-slider-input>
           
           <dd-slider-input 
             val='[[surfaceArea]]' 
             decimals='4' 
             title='Surface Area'
             units='cm^2'
-            details='The surface area of a single sphere with the a <span>{{core.diameter}}</span> 
-              &mu;m diameter.'></dd-slider-input>
+            details='The surface area of a single sphere.'>
+          </dd-slider-input>
           
           <dd-slider-input 
             val='[[volume]]' 
             decimals='4' 
             title='Volume'
             units='ml'
-            details='The volume of a single sphere with the a <span>{{core.diameter}}</span> 
-              &mu;m diameter.'></dd-slider-input>
+            details='The volume of a single sphere.'>
+          </dd-slider-input>
           
           <dd-slider-input 
             val='[[surfaceAreaToVolume]]' 
@@ -128,14 +156,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             units='ml'
             details='The surface area to volume ratio of a single sphere with the a <span>{{core.diameter}}</span> 
               &mu;m diameter. This is value is of interest to understand why a batch of small particles have 
-              a significantly larger amount of total surface area.'></dd-slider-input>
+              a significantly larger amount of total surface area.'>
+          </dd-slider-input>
           
           <dd-slider-input 
             val='[[particleCount]]' 
             decimals='0'
             title='Particle Count'
             units='count/g'
-            details='The mean particles starting radius in microns.'></dd-slider-input>
+            details='The mean particles starting radius in microns.'>
+          </dd-slider-input>
           
           <dd-slider-input 
             val='[[totalSurfaceArea]]' 
@@ -143,35 +173,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             title='Total Surface Area'
             units='cm^2/g'
             details='The surface area of a single sphere with 
-              the a <span>{{core.diameter}}</span> &mu;m diameter.'></dd-slider-input>
+              the a <span>{{core.diameter}}</span> &mu;m diameter.'>
+          </dd-slider-input>
           
-          <dd-slider-input 
-            val='[[bulkDensity]]' 
-            decimals='2' 
-            title='Bulk Density'
-            units='g/ml'
-            details='The estimated bulk density of the starting 
-              substrate. The estimtion is based on the optimal packing conditions
-              of a sphereical particles of 74.048% of the 
-              apparent density of beads.'></dd-slider-input>
         </div>
       </div>
       
-      <div class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-cell--top'>
-        <div class='mdl-card__title'>
-          <h5 class='mdl-card__title-text'>Coated Particle</h5>
-        </div>
-        <dd-sphere-graphic></dd-sphere-graphic>
-      </div>
+      <dd-sphere-graphic 
+        class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-cell--top'>
+      </dd-sphere-graphic>
       
-      <div class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-cell--top'>
-        <div class='mdl-card__title'>
-          <h5 class='mdl-card__title-text'>Capsule Details</h5>
-        </div>
-        <dd-capsule-graphic
-          capsule-fill-percent='0.4'
-          capsule-size='5'></dd-capsule-graphic>
-      </div>
+      <dd-capsule-graphic
+        class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-cell--top'
+        capsule-fill-percent='0.4'
+        capsule-size='5'>
+      </dd-capsule-graphic>
+      
       
       <div class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--8-col'>
         <div class='mdl-card__title'>
