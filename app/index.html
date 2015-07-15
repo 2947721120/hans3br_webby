@@ -138,12 +138,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <dd-core-dashboard page-name='CoreSubstrate'></dd-core-dashboard>
           
           <template is='dom-repeat' items='{{pages}}'>
-            <dd-coating-dashboard page-name$='{{item.pageName}}'></dd-coating-dashboard>
+            <dd-coating-dashboard 
+              page-name$='{{item.pageName}}'
+              coating-application$='{{item.pageTitle}}' 
+              coating-family$='{{item.productTitle}}'></dd-coating-dashboard>
           </template>
           
-          <div page-name='Capsule'>
-            <span>Capsule</span>
-          </div>
+          <dd-capsule-dashboard 
+            page-name='Capsule'>
+          </dd-capsule-dashboard>
+          
         </neon-animated-pages>
       </paper-header-panel>
     </paper-drawer-panel>
@@ -159,13 +163,37 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </div>
     </paper-dialog>
     
-    <paper-dialog id='sugletDialog' class='mdl-card' with-backdrop>
+    <paper-dialog id='sugletDialog' with-backdrop>
       <div class='mdl-card__title'>
         <div class='mdl-card__title-text'>
           Starting Material
         </div>
       </div>
       <div class='flex'>Choose your material...</div>
+      <button class="mdl-button mdl-js-button mdl-js-ripple-effect" dialog-confirm>
+          Okay
+      </button>
+    </paper-dialog>
+    
+    <paper-dialog id='coatingDialog' with-backdrop>
+      <div class='mdl-card__title'>
+        <div class='mdl-card__title-text'>
+          Coating Formulation
+        </div>
+      </div>
+      <div class='flex'>Choose your coating...</div>
+      <button class="mdl-button mdl-js-button mdl-js-ripple-effect" dialog-confirm>
+          Okay
+      </button>
+    </paper-dialog>
+    
+    <paper-dialog id='capsuleDialog' with-backdrop>
+      <div class='mdl-card__title'>
+        <div class='mdl-card__title-text'>
+          Capsule Selection
+        </div>
+      </div>
+      <div class='flex'>Choose your capsule...</div>
       <button class="mdl-button mdl-js-button mdl-js-ripple-effect" dialog-confirm>
           Okay
       </button>

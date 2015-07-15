@@ -27,22 +27,33 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       productTitle: "Opadry YS-1",
     },
     {
-      pageName: "FunctionalCoating", 
-      pageTitle: "Functional Coating",
-      productTitle: "Acryleze II",
+      pageName: "BarrierMembrane", 
+      pageTitle: "Barrier Membrane",
+      productTitle: "Surelease",
     }
   ];
-  //store a coating layer index for create new pages
-  app.coatingLayerNumber = 0;
     
   app.displayInstalledToast = function() {
     document.querySelector('#caching-complete').show();
   };
+  
+  window.addEventListener('WebComponentsReady', function() {
+    
+  });
 
-  // See https://github.com/Polymer/polymer/issues/1381
   window.addEventListener('dd-open-suglet-dialog', function() {
     // imports are loaded and elements have been registered
     document.querySelector('#sugletDialog').toggle();
+  });
+  
+  window.addEventListener('dd-open-coating-dialog', function() {
+    // imports are loaded and elements have been registered
+    document.querySelector('#coatingDialog').toggle();
+  });
+  
+  window.addEventListener('dd-open-capsule-dialog', function() {
+    // imports are loaded and elements have been registered
+    document.querySelector('#capsuleDialog').toggle();
   });
 
   // Close drawer after menu item is selected if drawerPanel is narrow
@@ -60,6 +71,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     }
   };
   
+  //store a coating layer index for create new pages
+  app.coatingLayerNumber = 0;
+  
+  //function to add a page
   app._addPage = function() {
     //we store the layer index and always increment by one
     app.coatingLayerNumber++;
@@ -72,6 +87,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 };
     //use polymer array api to push and notify of changes            
     app.push('pages', temp);
+    //after adding a layer we update the values
+    //updating only the core will fire the chain to update the other layers
+    var core = document.querySelector('dd-core-dashboard');
+    var coatings = document.querySelectorAll('dd-coating-dashboard');
+    //set the intial coating layer using the 
+    coatings[0].set('diameter', core.diameter);
+    coatings[0].set('apparentDensity', core.apparentDensity);
+    coatings[0].set('assay', core.assay);
   }
 
 })(document);

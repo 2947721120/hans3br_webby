@@ -52,20 +52,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         
         <div class='inputs'>
           
-          <dd-slider-input 
-            val='{{diameter}}' 
+          <dd-input 
+            val='[[diameter]]' 
             decimals='1' 
             min='150' 
             max='2400'
             title='Mean Diameter'
             units='&mu;m'
             details='The mean diameter of the starting particle.'>
-          </dd-slider-input>
+          </dd-input>
             
-  
-          
-          <dd-slider-input 
-            val='{{assay}}' 
+          <dd-input 
+            val='[[assay]]' 
             decimals='2' 
             min='0' 
             max='1000' 
@@ -74,10 +72,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             details='The starting assay of the core substrate in mg per gram of beads. This is typically zero
               but in the case of custom granulation or ext/sphereonization the particle may contain
               the active pharmaceutical ingredient.'>
-          </dd-slider-input>
+          </dd-input>
           
-          <dd-slider-input 
-            val='{{apparentDensity}}' 
+          <dd-input 
+            val='[[apparentDensity]]' 
             decimals='2' 
             min='0.5' 
             max='3'
@@ -85,9 +83,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             units='g/ml'
             details='The apparent density of the starting core substrate. This apparent denisty includes the porosity of the material
               but not the void space between particles.'>
-          </dd-slider-input>
+          </dd-input>
               
-           <dd-slider-input 
+           <dd-input 
             val='[[bulkDensity]]' 
             decimals='2' 
             title='Bulk Density'
@@ -96,20 +94,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               substrate. The estimtion is based on the optimal packing conditions
               of a sphereical particles of 74.048% of the 
               apparent density of beads.'>
-           </dd-slider-input>    
+           </dd-input>    
         </div>
         
       </div>
       
-      <div id='productSelectionCard' class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--3-col' on-tap='_fireOpenSugletDialog'>
+      <div id='productSelectionCard' class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--3-col mdl-cell--4-col-phone' on-tap='_fireOpenCoatingDialog'>
         
         <div class='mdl-card__title'>
-          <h5 class='mdl-card__title-text'>Drug Layering</h5>
+          <h5 class='mdl-card__title-text'>{{coatingApplication}}</h5>
         </div>
         
         <div class='mdl-card__title'>
-          <h5 class='mdl-card__subtitle-text'>Opadry Clear</h5>
-          <h5 class='mdl-card__subtitle-text'>03K19229</h5>
+          <h5 class='mdl-card__subtitle-text'>{{coatingFamily}}</h5>
         </div>
         
       </div>
@@ -122,7 +119,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         
         <div class='inputs'>
           
-          <dd-slider-input 
+          <dd-input 
             val='{{wg}}' 
             decimals='1' 
             min='0' 
@@ -130,9 +127,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             title='Weight Gain'
             units='%'
             details='The amount of coating applied based on the mass of the previous layer.'>
-          </dd-slider-input>
+          </dd-input>
           
-          <dd-slider-input 
+          <dd-input 
             val='{{filmDensity}}' 
             decimals='2' 
             min='0.5' 
@@ -142,9 +139,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             details='The apparent density of the coating material. This is the density of the film as depostied on the 
               core substrate. The apparent denisty does include in the porosity of the film. This density if mostly influenced by the
               type and level of ingredients used in the film coating but also the coating parameters'>
-          </dd-slider-input>
+          </dd-input>
           
-          <dd-slider-input 
+          <dd-input 
+            id='drugPercent'
             val='{{drugPercent}}' 
             decimals='1' 
             min='0' 
@@ -153,7 +151,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             units='%'
             details='The amount of API on a dry solids basis. For example 70% indicates 70mg of API are depostited for
               every 100mg of coating applied.'>
-          </dd-slider-input>
+          </dd-input>
             
         </div>
         
@@ -170,23 +168,23 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         
         <div class='outputs'>
           
-          <dd-slider-input 
+          <dd-input 
             val='[[coatedDiameter]]' 
             decimals='1'
             title='Diameter'
             units='&mu;m'
             details='The mean diameter of the particle after coating.'>
-          </dd-slider-input>
+          </dd-input>
           
-          <dd-slider-input 
+          <dd-input 
             val='[[coatedAssay]]' 
             decimals='2'
             title='Assay'
             units='&mu;m'
             details='The  assay of the particle after coating in mg per gram of beads.'>
-          </dd-slider-input>
+          </dd-input>
           
-          <dd-slider-input 
+          <dd-input 
             val='[[coatedApparentDensity]]' 
             decimals='2'
             title='Apparent Density'
@@ -194,9 +192,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             details='The apparent density of the coated particle. 
               The apparent denisty includes the porosity of the material
               but not the void space between particles.'>
-          </dd-slider-input>
+          </dd-input>
           
-          <dd-slider-input 
+          <dd-input 
             val='[[coatedBulkDensity]]' 
             decimals='2'
             title='Bulk Density'
@@ -204,7 +202,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             details='The estimated bulk density of the coated particle. 
               The estimtion is based on the optimal packing conditions
               of a sphereical particles of 74.048% of the apparent density of beads.'>
-          </dd-slider-input>
+          </dd-input>
           
         </div>
         
@@ -217,31 +215,32 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         
         <div class='outputs'>
           
-          <dd-slider-input 
+          <dd-input 
             val='[[filmThickness]]' 
             decimals='2'
             title='Film Thickness'
             units='&mu;m'
             details='The film thickness of this coating layer.'>
-          </dd-slider-input>
+          </dd-input>
           
-          <dd-slider-input 
+          <dd-input 
             val='[[coatingCoverage]]' 
             decimals='2'
             title='Coating Coverage'
             units='mg/cm^2'
             details='The amount by mass of coating applied over a surface area. The coating coverage is another way to quantify the amount
             of coating applied to a core.'>
-          </dd-slider-input>
+          </dd-input>
           
-          <dd-slider-input 
+          <dd-input 
+            id='sa2ft'
             val='[[sa2ft]]' 
             decimals='3'
             title='SA to FT'
             units='cm^2/g/&mu;m'
             details='The ratio of the specific surface area of the final coated particle to the film thickness. This value
             is important for barrier membrane coatings as this value will drive the release profile.'>
-          </dd-slider-input>
+          </dd-input>
           
         </div>
         
@@ -274,6 +273,24 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     properties: {
       
+      pageName: {
+        type: String,
+        value: 'Unknown'
+      },
+      
+      coatingApplication: {
+        type: String,
+        value: 'Coating Layer',
+        notify: true,
+        observer: '_setupPage'
+      },
+      
+      coatingFamily: {
+        type: String,
+        value: 'Opadry YS-1',
+        notify: true,
+      },
+      
       filmDensity: {
         type: Number, 
         value: 1.0,
@@ -286,7 +303,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       
       drugPercent: {
         type: Number,
-        value: 50.0
+        value: 0
       },
       
       coatedDiameter: {
@@ -368,6 +385,61 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       
     }, 
     
+    listeners: {
+      'dd-input-change': '_passValues'
+    },
+    
+    _passValues: function() {
+      this.debounce('pass value', function() {
+        //we get all the coating pages using polyer API - returns ARRAY!
+        var coatings = document.querySelectorAll('dd-coating-dashboard');
+        var capsule = document.querySelector('dd-capsule-dashboard');
+        //we figure out what page index we are by looping through the pages
+        //app.pages is a global variable defined in app.js
+        var currentIndex;
+        var len = app.pages.length;
+        for(var i = 0; i < len; i++) {
+          //app is a the global document with a pages array
+          if (app.pages[i].pageName === this.pageName) {
+            //use polymer array API to remove the index of pages and call notifiers
+            currentIndex = i;
+            break;
+          }
+        }
+        //if the layer is not the last we update the next coating layers values
+        //if the layer is the last we update the capsule layers
+        //again always using polymer set api
+        if(currentIndex + 1 < len) {
+          coatings[currentIndex + 1].set('diameter', coatings[currentIndex].coatedDiameter);
+          coatings[currentIndex + 1].set('apparentDensity', coatings[currentIndex].coatedApparentDensity);
+          coatings[currentIndex + 1].set('assay', coatings[currentIndex].coatedAssay);
+        } else {
+          capsule.set('diameter', coatings[currentIndex].coatedDiameter);
+          capsule.set('apparentDensity', coatings[currentIndex].coatedApparentDensity);
+          capsule.set('assay', coatings[currentIndex].coatedAssay);
+        }
+      });
+    },
+    
+    _setupPage: function(newValue, oldValue) {
+      this.drugPercent = 0;
+      this.$.sa2ft.hide = true;
+      this.$.drugPercent.hide = true;
+      if(newValue == 'Drug Layering') {
+        this.$.drugPercent.hide = false;
+        this.drugPercent = 50;
+      } else if (newValue == 'Seal Coating') {
+        
+      } else if(newValue == 'Enteric Coating') {
+        
+      } else if(newValue == 'Barrier Membrane') {
+        this.$.sa2ft.hide = false;
+      } else {
+        this.$.drugPercent.hide = false;
+        this.$.sa2ft.hide = false;
+      }
+    },
+    
     /**
      * sets the diameter of the coated particle
      * @param {number} coreDiam The starting diameter of the sphere in microns
@@ -442,8 +514,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       return totalSurfaceArea / filmThick;   
     },
     
-    _fireOpenSugletDialog: function(e) {
-      this.fire('dd-open-suglet-dialog');
+    _fireOpenCoatingDialog: function(e) {
+      this.fire('dd-open-coating-dialog');
     }
     
   });

@@ -44,15 +44,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     
     <div class='mdl-grid'>
       
-      <div id='productSelectionCard' class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--3-col' on-tap='_fireOpenSugletDialog'>
+      <div id='productSelectionCard' class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--3-col mdl-cell--4-col-phone' on-tap='_fireOpenSugletDialog'>
         
         <div class='mdl-card__title'>
-          <h5 class='mdl-card__title-text'>Suglets 20/25</h5>
+          <h5 class='mdl-card__title-text'>{{sugletName}}</h5>
         </div>
         
         <div class='mdl-card__title'>
-          <h5 class='mdl-card__subtitle-text'>710 - 850 &mu;m</h5>
-          <h5 class='mdl-card__subtitle-text'>PF010</h5>
+          <h5 class='mdl-card__subtitle-text'><span>{{sugletRange}}</span> &mu;m</h5>
         </div>
         
       </div>
@@ -65,24 +64,26 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         
         <div class='inputs'>
           
-          <dd-slider-input 
+          <dd-input 
             val='{{diameter}}' 
             decimals='1' 
-            min='150' 
-            max='2400'
+            min='{{minDiameter}}' 
+            max='{{maxDiameter}}'
             title='Mean Diameter'
             units='&mu;m'
-            details='The mean diameter of the starting particle.'></dd-slider-input>
+            details='The mean diameter of the starting particle.'>
+          </dd-input>
             
-          <dd-slider-input 
+          <dd-input 
             hide
             val='[[radius]]' 
             decimals='2' 
             title='Radius'
             units='&mu;m'
-            details='The mean particles starting radius in microns.'></dd-slider-input>  
+            details='The mean particles starting radius in microns.'>
+          </dd-input>  
           
-          <dd-slider-input 
+          <dd-input 
             val='{{assay}}' 
             decimals='2' 
             min='0' 
@@ -92,9 +93,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             details='The starting assay of the core substrate in mg per gram of beads. This is typically zero
               but in the case of custom granulation or ext/sphereonization the particle may contain
               the active pharmaceutical ingredient.'>
-          </dd-slider-input>
+          </dd-input>
           
-          <dd-slider-input 
+          <dd-input 
             val='{{apparentDensity}}' 
             decimals='2' 
             min='0.5' 
@@ -103,9 +104,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             units='g/ml'
             details='The apparent density of the starting core substrate. This apparent denisty includes the porosity of the material
               but not the void space between particles.'>
-          </dd-slider-input>
+          </dd-input>
               
-           <dd-slider-input 
+           <dd-input 
             val='[[bulkDensity]]' 
             decimals='2' 
             title='Bulk Density'
@@ -114,7 +115,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               substrate. The estimtion is based on the optimal packing conditions
               of a sphereical particles of 74.048% of the 
               apparent density of beads.'>
-           </dd-slider-input>    
+           </dd-input>    
         </div>
         
       </div>
@@ -130,23 +131,23 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         
         <div class='outputs'>
           
-          <dd-slider-input 
+          <dd-input 
             val='[[surfaceArea]]' 
             decimals='4' 
             title='Surface Area'
             units='cm^2'
             details='The surface area of a single sphere.'>
-          </dd-slider-input>
+          </dd-input>
           
-          <dd-slider-input 
+          <dd-input 
             val='[[volume]]' 
             decimals='4' 
             title='Volume'
             units='ml'
             details='The volume of a single sphere.'>
-          </dd-slider-input>
+          </dd-input>
           
-          <dd-slider-input 
+          <dd-input 
             val='[[surfaceAreaToVolume]]' 
             decimals='4' 
             title='SA to Volume'
@@ -154,24 +155,24 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             details='The surface area to volume ratio of a single sphere with the a <span>{{core.diameter}}</span> 
               &mu;m diameter. This is value is of interest to understand why a batch of small particles have 
               a significantly larger amount of total surface area.'>
-          </dd-slider-input>
+          </dd-input>
           
-          <dd-slider-input 
+          <dd-input 
             val='[[particleCount]]' 
             decimals='0'
             title='Particle Count'
             units='count/g'
             details='The mean particles starting radius in microns.'>
-          </dd-slider-input>
+          </dd-input>
           
-          <dd-slider-input 
+          <dd-input 
             val='[[totalSurfaceArea]]' 
             decimals='2'
             title='Total Surface Area'
             units='cm^2/g'
             details='The surface area of a single sphere with 
               the a <span>{{core.diameter}}</span> &mu;m diameter.'>
-          </dd-slider-input>
+          </dd-input>
           
         </div>
         
@@ -203,9 +204,48 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     ],
 
     properties: {
+      
+      sugletName: {
+        type: String,
+        value: 'Suglet'
+      },
+      
+      sugletRange: {
+        type: String, 
+        computed: '_computeSugletRange(minDiameter, maxDiameter)'
+      },
+      
+      minDiameter: {
+        type: Number,
+        value: 150
+      },
+      
+      maxDiameter: {
+        type: Number,
+        value: 2000
+      }
+      
     },
     
-   
+    listeners: {
+      'dd-input-change': '_passValues'
+    },
+    
+    _passValues: function() {
+      this.debounce('pass values', function() {
+        var core = document.querySelector('dd-core-dashboard');
+        var coatings = document.querySelectorAll('dd-coating-dashboard');
+        //set the intial coating layer using the 
+        coatings[0].set('diameter', core.diameter);
+        coatings[0].set('apparentDensity', core.apparentDensity);
+        coatings[0].set('assay', core.assay);
+      });
+    },
+    
+    _computeSugletRange: function(min, max) {
+      return min + ' - ' + max;
+    },
+    
     _fireOpenSugletDialog: function(e) {
       this.fire('dd-open-suglet-dialog');
     }

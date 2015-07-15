@@ -7,7 +7,7 @@ a title and description which collapses on click
 
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
-<dom-module id='dd-slider-input'>
+<dom-module id='dd-input'>
   
   <style is='custom-style'>
   
@@ -86,7 +86,7 @@ a title and description which collapses on click
 <script>
   Polymer({
     
-    is: 'dd-slider-input', 
+    is: 'dd-input', 
     
     properties: {
       
@@ -163,6 +163,7 @@ a title and description which collapses on click
       } else {
         this.$.put.value = newValue
       }
+      this.fire('dd-input-change');
     },
     
     _onInput: function(e) {
