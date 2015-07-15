@@ -10,7 +10,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
-<dom-module id="dd-sphere-graphic">
+<dom-module id="dd-sphere-card">
   
   <style>
     :host {
@@ -30,25 +30,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   
   <template>
     
-    <div>
+    <div class='flex layout vertical'>
       
       <div class='mdl-card__title'>
         <h5 class='mdl-card__title-text'>Coated Particle</h5>
       </div>
       
-        <div class='layout vertical flex'>
-          <div class='flex layout horizontal center-center'>
-            <svg id='sphere_svg'></svg>
-        </div>
-        
-        <iron-selector class='layout horizontal center-center' selected='{{layerIndex}}'>
-          <template is='dom-repeat' items='{{diameterArray}}'>
-            <paper-icon-button icon='icons:radio-button-checked'></paper-icon-button>
-          </template>
-        </iron-selector>
-        
+      <div class='flex layout horizontal center-center'>
+        <svg id='sphere_svg'></svg>
       </div>
-      
+        
+      <iron-selector class='layout horizontal center-center' selected='{{layerIndex}}'>
+        <template is='dom-repeat' items='{{diameterArray}}'>
+          <paper-icon-button icon='icons:radio-button-checked'></paper-icon-button>
+        </template>
+      </iron-selector>
+        
     </div>
     
   </template>
@@ -59,7 +56,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   Polymer({
     
-    is: 'dd-sphere-graphic',
+    is: 'dd-sphere-card',
     
     behaviors: [
       Polymer.IronResizableBehavior

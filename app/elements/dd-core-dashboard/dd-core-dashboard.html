@@ -17,11 +17,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       display: block;
     }
     
-    paper-toolbar {
-      color: inherit;
-      background-color: inherit;
-    }
-    
     div.mdl-cell {
       background: #fff;
       min-height: 324px;
@@ -43,35 +38,31 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     #productSelectionCard > .mdl-card__title > h5 {
       align-self: center;
     }
-    
-    dd-sphere-graphic {
-      min-height: 324px;
-    }
-    
-    dd-capsule-graphic {
-      min-height: 324px;
-    }
-    
   </style>
   
   <template>
     
     <div class='mdl-grid'>
       
-      <div id='productSelectionCard' class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--3-col mdl-cell--top'>
+      <div id='productSelectionCard' class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--3-col' on-tap='_fireOpenSugletDialog'>
+        
         <div class='mdl-card__title'>
           <h5 class='mdl-card__title-text'>Suglets 20/25</h5>
         </div>
+        
         <div class='mdl-card__title'>
           <h5 class='mdl-card__subtitle-text'>710 - 850 &mu;m</h5>
           <h5 class='mdl-card__subtitle-text'>PF010</h5>
         </div>
+        
       </div>
       
-      <div class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-cell--top'>
+      <div class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col'>
+        
         <div class='mdl-card__title'>
           <h5 class='mdl-card__title-text'>Particle Details</h5>
         </div>
+        
         <div class='inputs'>
           
           <dd-slider-input 
@@ -125,12 +116,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               apparent density of beads.'>
            </dd-slider-input>    
         </div>
+        
       </div>
       
-      <div class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-cell--top'>
+      <dd-sphere-card 
+        class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col'>
+      </dd-sphere-card>
+      
+      <div class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col'>
         <div class='mdl-card__title'>
           <h5 class='mdl-card__title-text'>Theoretical Details</h5>
         </div>
+        
         <div class='outputs'>
           
           <dd-slider-input 
@@ -177,25 +174,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </dd-slider-input>
           
         </div>
+        
       </div>
       
-      <dd-sphere-graphic 
-        class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-cell--top'>
-      </dd-sphere-graphic>
-      
-      <dd-capsule-graphic
-        class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-cell--top'
+      <dd-capsule-card 
+        class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col'
         capsule-fill-percent='0.4'
         capsule-size='5'>
-      </dd-capsule-graphic>
+      </dd-capsule-card>
       
-      
-      <div class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--8-col'>
-        <div class='mdl-card__title'>
-          <h5 class='mdl-card__title-text'>Summary Table</h5>
-        </div>
-        <div></div>
-      </div>
+      <dd-summary-card 
+        class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--8-col'>
+      </dd-summary-card>
       
     </div>
     
@@ -213,28 +203,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     ],
 
     properties: {
-      
-      _detailDialogTitle: {
-        type: String,
-        value: 'Details',
-        readyOnly: true
-      },
-      
-      _detailDialogText: {
-        type: String,
-        value: 'Details go here...',
-        readyOnly: true
-      }
-      
     },
     
-    listeners: {
-      'dd-input-info-dialog': '_openDetailsDialog'  
-    },
-    
-    _openDetailsDialog: function(e) {
-      
-      this.$.detailDialog.toggle();
+   
+    _fireOpenSugletDialog: function(e) {
+      this.fire('dd-open-suglet-dialog');
     }
     
   });

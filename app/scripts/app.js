@@ -40,9 +40,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   };
 
   // See https://github.com/Polymer/polymer/issues/1381
-  window.addEventListener('WebComponentsReady', function() {
+  window.addEventListener('dd-open-suglet-dialog', function() {
     // imports are loaded and elements have been registered
-    
+    document.querySelector('#sugletDialog').toggle();
   });
 
   // Close drawer after menu item is selected if drawerPanel is narrow
