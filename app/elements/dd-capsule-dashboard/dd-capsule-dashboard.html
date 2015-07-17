@@ -19,7 +19,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     
     div.mdl-cell {
       background: #fff;
-      min-height: 324px;
+      min-height: 272;
       overflow: auto;
     }
     
@@ -278,7 +278,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       capsuleSize: {
         type: String,
         value: "Size #2",
-        notify: true,
+        notify: true
       },
       
       capsuleVolumeMax: {
@@ -338,6 +338,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         computed: '_calcCapsuleFillPercent(capsuleFillVolume, capsuleVolumeMax)'
       }
       
+  },
+  
+  listeners: {
+    'dd-input-change': '_capsuleChanged'
+  },
+  
+  ready: function() {
+    
+  },
+  
+  _capsuleChanged: function(newValue, oldValue) {
+    this.debounce('fire capsule change', function(){this.fire('dd-capsule-change');});
   },
   
   /**

@@ -17,18 +17,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     
     svg {
       height: 200px;
-      width: 200px;
+      width: 100px;
+    }
+    
+    .count_text {
+      font-size: 48px;
+      font-weight: 200;
+      font-family: Roboto;
+      color: var(--secondary-text-color);
     }
     
     .outline {
       fill: none;
       stroke-width: 2.5px;
-      stroke: var(--divider-color);
+      stroke: var(--secondary-text-color);
     }
     
     .fill {
       stroke: transparent;
-      fill: var(--default-primary-color);
+      fill: var(--accent-color);
     }
   </style>
   
@@ -44,6 +51,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <path class='outline' d$='{{_outlinePath}}'/>
           <path class='outline' d$='{{_outlineBellyBandPath}}'/>
         </svg>
+        <div class='count_text'>x<span>{{capsuleCount}}</span></div>
       </div>
     </div>
     
@@ -62,9 +70,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         value: 0.7
       },
       
+      capsuleVolumeMax: {
+        type: Number,
+        value: 1
+      },
+      
       capsuleSize: {
         type: Number,
-        value: 1,
+        computed: '_calcCapsuleSize(capsuleVolumeMax)'
+      },
+      
+      capsuleCount: {
+        type: Number,
+        value: 1
       },
       
       _capsuleHeight: {
@@ -122,6 +140,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       
     },
     
+    updateValues: function(){
+      var cap = document.querySelector('dd-capsule-dashboard');
+      this.capsuleFillPercent = cap.capsuleFillPercent / 100;  //capsule card uses 0-1 percent. dashboard uses 0-100 percent
+      this.capsuleVolumeMax = cap.capsuleVolumeMax;    
+      this.capsuleCount = cap.capsuleCount;
+    },
+    
+    _calcCapsuleSize: function(vol) {
+      return Math.cbrt(vol) * 1.4;
+    },
+    
     _calcCapsuleHeight: function(capSize) {
       return capSize * this._HEIGHT_SCALER;
     },
@@ -145,7 +174,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     },
     
     _calcOutlinePath: function(capHeight, capWidth, outArc) {
-      var startPoint = 'M' + (100-capWidth/2) + ',' + (100-capHeight/2);
+      var startPoint = 'M' + (50-capWidth/2) + ',' + (100-capHeight/2);
       var leftBorder = 'l0,' + capHeight;
       var bottomArc = 'a' + outArc + ',' + outArc + ',0,0,0,' + capWidth + ',0';
       var rightBorder = 'l0,-' + capHeight; //notice the negative in the string
@@ -154,14 +183,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     }, 
     
     _calcOutlineBellyBandPath: function(capWidth) {
-      var startPoint = 'M' + (100-capWidth/2) + ',100';
+      var startPoint = 'M' + (50-capWidth/2) + ',100';
       var arc = 'a120,120,0,0,0,' + capWidth + ',0';
       return startPoint + arc;
     }, 
     
     _calcFillPath: function(capFillPercent, capHeight, capWidth, outArc, fillArc) {
       if(capFillPercent > 0) {
-        var startPoint = 'M' + (100-capWidth/2) + ',' + (100-capHeight/2);
+        var startPoint = 'M' + (50-capWidth/2) + ',' + (100-capHeight/2);
         var fillStartPoint = 'm0,' + capHeight * (1-capFillPercent);
         var leftFillBorder = 'l0,' + capHeight * capFillPercent;
         var bottomArc = 'a' + outArc + ',' + outArc + ',0,0,0,' + capWidth + ',0';
@@ -169,14 +198,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         var topArc = 'a' + fillArc + ',' + fillArc + ',0,0,0,-' + capWidth + ',0'; //notice the negative in the string for width
         return startPoint + fillStartPoint + leftFillBorder + bottomArc + rightFillBorder + topArc;
       } else {
-        var blankPoint = 'M' + (100-capWidth/2) + ',' + (100-capHeight/2);
+        var blankPoint = 'M' + (50-capWidth/2) + ',' + (100-capHeight/2);
         return blankPoint;
       }
-    },
-    
-    ready: function() {
-      this.capsuleSize = 2;
-      this.capsuleFillPercent = 0.76;
     }
     
     

@@ -37,8 +37,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     document.querySelector('#caching-complete').show();
   };
   
+  // See https://github.com/Polymer/polymer/issues/1381
   window.addEventListener('WebComponentsReady', function() {
-    
+    // imports are loaded and elements have been registered
+    document.querySelector('dd-core-dashboard').diameter = 644;
+    document.querySelector('dd-capsule-dashboard').capsuleVolumeMax = 0.7;
   });
 
   window.addEventListener('dd-open-suglet-dialog', function() {
@@ -54,6 +57,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   window.addEventListener('dd-open-capsule-dialog', function() {
     // imports are loaded and elements have been registered
     document.querySelector('#capsuleDialog').toggle();
+  });
+  
+  window.addEventListener('dd-last-diameter-change', function() {
+    var spheres = document.querySelectorAll('dd-sphere-card');
+    for(var i=0; i<spheres.length; i++) {
+      spheres[i]._updateGraphic();
+    }
+  });
+  
+  //event fired when the capsule dashboard changes the fill percent
+  window.addEventListener('dd-capsule-change', function() {
+    console.log('capsule fill changed');
+    var capsuleCards = document.querySelectorAll('dd-capsule-card');
+    for(var i=0; i<capsuleCards.length; i++) {
+      capsuleCards[i].updateValues();
+    }
   });
 
   // Close drawer after menu item is selected if drawerPanel is narrow
@@ -95,6 +114,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     coatings[0].set('diameter', core.diameter);
     coatings[0].set('apparentDensity', core.apparentDensity);
     coatings[0].set('assay', core.assay);
-  }
+  };
 
 })(document);

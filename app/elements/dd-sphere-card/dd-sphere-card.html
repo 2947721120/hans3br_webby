@@ -16,13 +16,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     :host {
     }
     
-    paper-icon-button {
+    iron-icon {
       color: var(--disabled-text-color);
       --iron-icon-height: 18px;
       --iron-icon-width: 18px;
+      margin: 8px;
     }
     
-    paper-icon-button.iron-selected {
+    iron-icon.iron-selected {
       color: var(--accent-color);
     }
     
@@ -40,9 +41,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <svg id='sphere_svg'></svg>
       </div>
         
-      <iron-selector class='layout horizontal center-center' selected='{{layerIndex}}'>
+      <iron-selector class='layout horizontal center-center' selected='{{layerIndex}}' activate-event=''>
         <template is='dom-repeat' items='{{diameterArray}}'>
-          <paper-icon-button icon='icons:radio-button-checked'></paper-icon-button>
+          <iron-icon icon='icons:radio-button-checked'></iron-icon>
         </template>
       </iron-selector>
         
@@ -85,21 +86,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         observer: '_updateGraphic'
       },
       
-      _highlightColor: {
-        type: 'String', 
-        computed: '_calcHighlightColor(layerDensity)'
-      },
-      
       _height: {
         type: Number, 
-        value: 200, 
-        observer: '_updateGraphic'
+        value: 200
       },
       
       _width: {
         type: Number,
-        value: 200, 
-        observer: '_updateGraphic'
+        value: 200
       },
       
       _centerX: {
@@ -114,70 +108,70 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       
     },
     
-    listeners: {
-      'iron-resize': '_resize'
-    },
-    
     _calcCenter: function(x) {
       return x / 2;
     },
     
-    _resize: function() {
-      //this._width = this.offsetWidth;
-    },
-    
     _updateGraphic: function() {
-      console.log('updating sphere');
-      try {
-        //call _getData to collect all the diameter data from other elements           
-        var diameters = this._getData();
-        
-        //create a color scale to calculate the color of each layer
-        //needs to be a local variable to pass through d3 function
-        //we also set the min and max values based on the diameters showing
-        //this allows us to achieve the most contrast
-        var colorScale = this._colorScale(d3.min(diameters), d3.max(diameters));
-        
-        //we compute the adjusted index because we plot the spheres
-        //in reverse order
-        //need a local version to pass through d3 function calls
-        //do not foget the 1 to adjust for zero index
-        var layerIndex = diameters.length - this.layerIndex - 1;
-        
-        //set the size
-        var svg = d3.select(this.$.sphere_svg)
-                    .style('height', this._height)
-                    .style('width', this._width);
-                    
-        //attach the data and add circles as needed. Filter on index and change color to highlight
-        var circles =  d3.select(this.$.sphere_svg)
-                          .selectAll('circle')
-                          .data(diameters.sort(d3.descending));
-                          
-        //for the circles that already exist we get them and update their diameter               
-        circles.attr('cx', this._centerX)
-                .attr('cy', this._centerY)
-                .attr('r', function(d){return d / 18;})
-                .attr('fill', function(d){return colorScale(d);})
-                .filter(function(d, i){return i === layerIndex;})
-                    .attr('fill', this._highlightColor);                  
-        
-        //if we have more datapoints than circles add circle and style                   
-        circles.enter()
-                .append('circle')
-                .attr('cx', this._centerX)
-                .attr('cy', this._centerY)
-                .attr('r', function(d){return d / 18;})
-                .attr('fill', function(d){return colorScale(d);})
-                .filter(function(d, i){return i === layerIndex;})
-                    .attr('fill', this._highlightColor);
-        
-        //if there are less datapoint than circles delete the layer
-        circles.exit().remove();
-      }
-      catch(err) {
-        //console.log('update graphic error')
-      }
+      this.debounce('update graphic', function() {
+        try {
+          
+          //call _getData to update the diameter array form other elements   \
+          this._getData();
+          
+          //we need a local variable of diameters to pass through d3 functin
+          var diameters = this.diameterArray;
+          
+          //create a color scale to calculate the color of each layer
+          //needs to be a local variable to pass through d3 function
+          //we also set the min and max values based on the diameters showing
+          //this allows us to achieve the most contrast
+          var colorScale = this._colorScale(d3.min(diameters), d3.max(diameters));
+          
+          var highlightColor = this._getHighlightColor();
+          
+          //we compute the adjusted index because we plot the spheres
+          //in reverse order
+          //need a local version to pass through d3 function calls
+          //do not foget the 1 to adjust for zero index
+          var layerIndex = diameters.length - this.layerIndex - 1;
+          
+          //set the size
+          var svg = d3.select(this.$.sphere_svg)
+                      .style('height', this._height)
+                      .style('width', this._width);
+                      
+          //attach the data and add circles as needed. Filter on index and change color to highlight
+          var circles =  d3.select(this.$.sphere_svg)
+                            .selectAll('circle')
+                            .data(diameters.sort(d3.descending));
+                            
+          //for the circles that already exist we get them and update their diameter               
+          circles.attr('cx', this._centerX)
+                  .attr('cy', this._centerY)
+                  .attr('r', function(d){return d / 18;})
+                  .attr('fill', function(d){return colorScale(d);})
+                  .filter(function(d, i){return i === layerIndex;})
+                      .attr('fill', highlightColor);                  
+          
+          //if we have more datapoints than circles add circle and style                   
+          circles.enter()
+                  .append('circle')
+                  .attr('cx', this._centerX)
+                  .attr('cy', this._centerY)
+                  .attr('r', function(d){return d / 18;})
+                  .attr('fill', function(d){return colorScale(d);})
+                  .filter(function(d, i){return i === layerIndex;})
+                    .attr('fill', highlightColor);
+          
+          //if there are less datapoint than circles delete the layer
+          circles.exit().remove();
+        } 
+        catch(err) {
+          //console.log('update graphic error')
+        }
+      });
+      
     },
     
   //helper function and values 
@@ -185,23 +179,48 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       return  d3.scale
                 .linear()
                 .domain([minValue, maxValue])
-                .range(["#B6B6B6", "#727272"]);
+                .range(["#C5CAE9", "#303F9F"]);
     }, 
     
-    _calcHighlightColor: function(dens) {
+    _getHighlightColor: function() {
       //create a d3 color scale for the highlight blue color
       //the color will change depending on the layer density
-      var blueScale = d3.scale
+      var col = '#00796B';
+      var pinkScale = d3.scale
                         .linear()
                         .domain([0, 3])
-                        .range(["#7986CB", "#3949AB"]);
-      return blueScale(dens);
+                        .range(["#F48FB1", "#C2185B"]);
+      var grayScale = d3.scale
+                        .linear()
+                        .domain([0, 3])
+                        .range(["#CFD8DC", "#455A64"]);
+      if(this.layerIndex != 0) {
+        col = pinkScale(this.layerDensity);
+      } else {
+        col = grayScale(this.layerDensity)
+      }
+      return col;
     },
     
     _getData: function() {
-      //empty array to hold our values
-      var diameters = this.diameterArray
-      return diameters
+      //create an empty array to hold the diameters
+      var diams = [];
+      //set get the core diameter
+      var core = document.querySelector('dd-core-dashboard');
+      //we watch for changes to the core diameter and when we do we get all other changes
+      diams.push(core.diameter);
+      //get all the coating dashboards to 
+      var coatings = document.querySelectorAll('dd-coating-dashboard');
+      for(var i = 0; i < coatings.length; i++) {
+        diams.push(coatings[i].coatedDiameter);
+      }
+      //if diams is full we return the diams
+      //else we return a default array
+      if(diams) {
+        this.diameterArray =  diams;
+      } else {
+        this.diameterArray =  [650, 705, 900];
+      }
     },
     
   });

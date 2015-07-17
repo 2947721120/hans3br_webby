@@ -19,7 +19,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     
     div.mdl-cell {
       background: #fff;
-      min-height: 324px;
+      min-height: 272;
       overflow: auto;
     }
     
@@ -158,7 +158,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </div>
       
       <dd-sphere-card 
-        class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col'>
+        class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col'
+        layer-density='{{filmDensity}}'
+        layer-index='{{diameterIndex}}'>
       </dd-sphere-card>
       
       <div class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col'>
@@ -180,7 +182,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             val='[[coatedAssay]]' 
             decimals='2'
             title='Assay'
-            units='&mu;m'
+            units='mg/g'
             details='The  assay of the particle after coating in mg per gram of beads.'>
           </dd-input>
           
@@ -247,9 +249,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </div>
       
       <dd-capsule-card 
-        class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col'
-        capsule-fill-percent='0.4'
-        capsule-size='5'>
+        class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col'>
       </dd-capsule-card>
       
       <dd-summary-card 
@@ -276,6 +276,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       pageName: {
         type: String,
         value: 'Unknown'
+      },
+      
+      diameterIndex: {
+        type: Number,
+        computed: '_computeDiameterIndex(pageName)'
       },
       
       coatingApplication: {
@@ -389,6 +394,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       'dd-input-change': '_passValues'
     },
     
+    _computeDiameterIndex: function(pageName) {
+      //start at 1 because core is 0;
+      var currentIndex = 1;
+      for(var i = 0; i < app.pages.length; i++) {
+        //app is a the global document with a pages array
+        if (app.pages[i].pageName === pageName) {
+          //use polymer array API to remove the index of pages and call notifiers
+          currentIndex = currentIndex + i;
+          break;
+        }
+      }
+      return currentIndex;
+    },
+    
     _passValues: function() {
       this.debounce('pass value', function() {
         //we get all the coating pages using polyer API - returns ARRAY!
@@ -417,8 +436,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           capsule.set('diameter', coatings[currentIndex].coatedDiameter);
           capsule.set('apparentDensity', coatings[currentIndex].coatedApparentDensity);
           capsule.set('assay', coatings[currentIndex].coatedAssay);
+          this.fire('dd-last-diameter-change');
         }
-      });
+      }, 10);
     },
     
     _setupPage: function(newValue, oldValue) {

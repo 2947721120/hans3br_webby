@@ -19,7 +19,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     
     div.mdl-cell {
       background: #fff;
-      min-height: 324px;
+      min-height: 272;
       overflow: auto;
     }
     
@@ -121,7 +121,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </div>
       
       <dd-sphere-card 
-        class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col'>
+        class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col'
+        layer-density='[[apparentDensity]]'>
       </dd-sphere-card>
       
       <div class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col'>
@@ -224,11 +225,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         type: Number,
         value: 2000
       }
-      
     },
     
     listeners: {
       'dd-input-change': '_passValues'
+    },
+    
+    ready: function() {
+      this.querySelector('dd-sphere-card').set('layerIndex',0);
     },
     
     _passValues: function() {
@@ -239,7 +243,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         coatings[0].set('diameter', core.diameter);
         coatings[0].set('apparentDensity', core.apparentDensity);
         coatings[0].set('assay', core.assay);
-      });
+      }, 10);
     },
     
     _computeSugletRange: function(min, max) {

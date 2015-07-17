@@ -161,7 +161,7 @@ a title and description which collapses on click
         var decimalFactor = Math.pow(10, this.decimals);
         this.$.put.value = Math.round(newValue * decimalFactor) / decimalFactor;
       } else {
-        this.$.put.value = newValue
+        this.$.put.value = newValue;
       }
       this.fire('dd-input-change');
     },
