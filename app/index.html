@@ -140,8 +140,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <template is='dom-repeat' items='{{pages}}'>
             <dd-coating-dashboard 
               page-name$='{{item.pageName}}'
+              coating-index$='{{index}}'
               coating-application$='{{item.pageTitle}}' 
-              coating-family$='{{item.productTitle}}'></dd-coating-dashboard>
+              coating-family$='{{item.productTitle}}'>
+            </dd-coating-dashboard>
           </template>
           
           <dd-capsule-dashboard 

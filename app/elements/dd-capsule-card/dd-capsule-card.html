@@ -174,22 +174,32 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     },
     
     _calcOutlinePath: function(capHeight, capWidth, outArc) {
-      var startPoint = 'M' + (50-capWidth/2) + ',' + (100-capHeight/2);
-      var leftBorder = 'l0,' + capHeight;
-      var bottomArc = 'a' + outArc + ',' + outArc + ',0,0,0,' + capWidth + ',0';
-      var rightBorder = 'l0,-' + capHeight; //notice the negative in the string
-      var topArc = 'a' + outArc + ',' + outArc + ',0,0,0,-' + capWidth + ',0'; //notice the negative in string for capWidth
-      return startPoint + leftBorder + bottomArc + rightBorder + topArc;
+      if(isNaN(capWidth) || isNaN(capWidth) || isNaN(outArc)){
+        return 'M0,0';
+      } else {
+        var startPoint = 'M' + (50-capWidth/2) + ',' + (100-capHeight/2);
+        var leftBorder = 'l0,' + capHeight;
+        var bottomArc = 'a' + outArc + ',' + outArc + ',0,0,0,' + capWidth + ',0';
+        var rightBorder = 'l0,-' + capHeight; //notice the negative in the string
+        var topArc = 'a' + outArc + ',' + outArc + ',0,0,0,-' + capWidth + ',0'; //notice the negative in string for capWidth
+        return startPoint + leftBorder + bottomArc + rightBorder + topArc;
+      }
     }, 
     
     _calcOutlineBellyBandPath: function(capWidth) {
-      var startPoint = 'M' + (50-capWidth/2) + ',100';
-      var arc = 'a120,120,0,0,0,' + capWidth + ',0';
-      return startPoint + arc;
+      if(!isNaN(capWidth)){
+        var startPoint = 'M' + (50-capWidth/2) + ',100';
+        var arc = 'a120,120,0,0,0,' + capWidth + ',0';
+        return startPoint + arc;
+      } else {
+        return 'M0,0';
+      }
     }, 
     
     _calcFillPath: function(capFillPercent, capHeight, capWidth, outArc, fillArc) {
-      if(capFillPercent > 0) {
+      if(isNaN(capFillPercent) || isNaN(capHeight) || isNaN(capWidth) || isNaN(outArc) || isNaN(fillArc)){
+        return 'M0,0';
+      } else if(capFillPercent > 0) {
         var startPoint = 'M' + (50-capWidth/2) + ',' + (100-capHeight/2);
         var fillStartPoint = 'm0,' + capHeight * (1-capFillPercent);
         var leftFillBorder = 'l0,' + capHeight * capFillPercent;
@@ -198,8 +208,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         var topArc = 'a' + fillArc + ',' + fillArc + ',0,0,0,-' + capWidth + ',0'; //notice the negative in the string for width
         return startPoint + fillStartPoint + leftFillBorder + bottomArc + rightFillBorder + topArc;
       } else {
-        var blankPoint = 'M' + (50-capWidth/2) + ',' + (100-capHeight/2);
-        return blankPoint;
+        return 'M0,0';
       }
     }
     

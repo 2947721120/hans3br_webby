@@ -23,6 +23,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       overflow: auto;
     }
     
+    .height-limit {
+      max-height: 324px;
+    }
+    
     #productSelectionCard {
       background-image: url('../../images/Opadry-II-Page.jpg');
       background-size: cover;
@@ -44,25 +48,27 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     
     <div class='mdl-grid'>
       
-      <div class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col'>
+      <div class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--3-col mdl-cell--4-col-phone'>
         
         <div class='mdl-card__title'>
-          <h5 class='mdl-card__title-text'>Starting Particle</h5>
+          <h5 class='mdl-card__title-text'>Pre-coated Particle</h5>
         </div>
         
         <div class='inputs'>
           
           <dd-input 
+            locked
             val='[[diameter]]' 
             decimals='1' 
             min='150' 
-            max='2400'
+            max='2300'
             title='Mean Diameter'
             units='&mu;m'
             details='The mean diameter of the starting particle.'>
           </dd-input>
             
           <dd-input 
+            locked
             val='[[assay]]' 
             decimals='2' 
             min='0' 
@@ -75,6 +81,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </dd-input>
           
           <dd-input 
+            locked
             val='[[apparentDensity]]' 
             decimals='2' 
             min='0.5' 
@@ -86,6 +93,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </dd-input>
               
            <dd-input 
+            locked
             val='[[bulkDensity]]' 
             decimals='2' 
             title='Bulk Density'
@@ -99,7 +107,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         
       </div>
       
-      <div id='productSelectionCard' class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--3-col mdl-cell--4-col-phone' on-tap='_fireOpenCoatingDialog'>
+      <div 
+        id='productSelectionCard' 
+        class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--3-col mdl-cell--4-col-phone height-limit' 
+        on-tap='_fireOpenCoatingDialog'>
         
         <div class='mdl-card__title'>
           <h5 class='mdl-card__title-text'>{{coatingApplication}}</h5>
@@ -111,7 +122,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         
       </div>
       
-      <div class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col'>
+      <div class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--3-col mdl-cell--4-col-phone'>
         
         <div class='mdl-card__title'>
           <h5 class='mdl-card__title-text'>Coating Details</h5>
@@ -158,12 +169,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </div>
       
       <dd-sphere-card 
-        class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col'
+        class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--3-col mdl-cell--4-col-phone height-limit'
         layer-density='{{filmDensity}}'
-        layer-index='{{diameterIndex}}'>
+        layer-index='{{_computeDiameterIndex(coatingIndex)}}'>
       </dd-sphere-card>
       
-      <div class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col'>
+      <div class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--3-col mdl-cell--4-col-phone'>
         <div class='mdl-card__title'>
           <h5 class='mdl-card__title-text'>Coated Particle</h5>
         </div>
@@ -171,6 +182,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <div class='outputs'>
           
           <dd-input 
+            locked
             val='[[coatedDiameter]]' 
             decimals='1'
             title='Diameter'
@@ -179,6 +191,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </dd-input>
           
           <dd-input 
+            locked
             val='[[coatedAssay]]' 
             decimals='2'
             title='Assay'
@@ -187,6 +200,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </dd-input>
           
           <dd-input 
+            locked
             val='[[coatedApparentDensity]]' 
             decimals='2'
             title='Apparent Density'
@@ -197,6 +211,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </dd-input>
           
           <dd-input 
+            locked
             val='[[coatedBulkDensity]]' 
             decimals='2'
             title='Bulk Density'
@@ -210,7 +225,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         
       </div>
       
-      <div class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col'>
+      <div class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--3-col mdl-cell--4-col-phone'>
         <div class='mdl-card__title'>
           <h5 class='mdl-card__title-text'>Film Properties</h5>
         </div>
@@ -218,6 +233,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <div class='outputs'>
           
           <dd-input 
+            locked
             val='[[filmThickness]]' 
             decimals='2'
             title='Film Thickness'
@@ -226,6 +242,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </dd-input>
           
           <dd-input 
+            locked
             val='[[coatingCoverage]]' 
             decimals='2'
             title='Coating Coverage'
@@ -235,6 +252,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </dd-input>
           
           <dd-input 
+            locked
             id='sa2ft'
             val='[[sa2ft]]' 
             decimals='3'
@@ -249,12 +267,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </div>
       
       <dd-capsule-card 
-        class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col'>
+        class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--3-col mdl-cell--4-col-phone height-limit'>
       </dd-capsule-card>
-      
-      <dd-summary-card 
-        class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--8-col'>
-      </dd-summary-card>
       
     </div>
     
@@ -278,9 +292,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         value: 'Unknown'
       },
       
-      diameterIndex: {
+      coatingIndex: {
         type: Number,
-        computed: '_computeDiameterIndex(pageName)'
+        number: 1,
+        observer: '_passValues'
       },
       
       coatingApplication: {
@@ -394,18 +409,51 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       'dd-input-change': '_passValues'
     },
     
-    _computeDiameterIndex: function(pageName) {
-      //start at 1 because core is 0;
-      var currentIndex = 1;
-      for(var i = 0; i < app.pages.length; i++) {
-        //app is a the global document with a pages array
-        if (app.pages[i].pageName === pageName) {
-          //use polymer array API to remove the index of pages and call notifiers
-          currentIndex = currentIndex + i;
-          break;
-        }
+    attached: function() {
+      var coatings = document.querySelectorAll('dd-coating-dashboard');
+      //set the intial coating layer using the 
+      if(this.coatingIndex>0) {
+        var prevLayer = coatings[this.coatingIndex - 1];
+        this.set('diameter', prevLayer.coatedDiameter);
+        this.set('apparentDensity', prevLayer.coatedApparentDensity);
+        this.set('assay', prevLayer.coatedAssay);
       }
-      return currentIndex;
+    },
+    
+    detached: function() {
+      //get all the coating layer - current layer is alredy removed
+      var coatings = document.querySelectorAll('dd-coating-dashboard');
+      //set the intial coating layer using the 
+      if(this.coatingIndex == 0) {
+        console.log('update from core');
+        //if this was the first coating layer we update the next layer with the core data
+        var core = document.querySelector('dd-core-dashboard');
+        //layer is alredy detached so we get the new layer in it's index position
+        var nextLayer = coatings[this.coatingIndex];
+        nextLayer.set('diameter', core.diameter);
+        nextLayer.set('apparentDensity', core.pparentDensity);
+        nextLayer.set('assay', core.assay);
+      } else if(this.coatingIndex == coatings.length) { //we do not remove 1 because a layer was detaached alredy and testing if it was the last layer
+        console.log('update capsule');
+        //if this was the last layer we get the previous layer and update the capusle
+        var capsule = document.querySelector('dd-capsule-dashboard');
+        var prevLayer = coatings[this.coatingIndex - 1];
+        capsule.set('diameter', prevLayer.coatedDiameter);
+        capsule.set('assay', prevLayer.coatedAssay);
+        capsule.set('apparentDensity', prevLayer.coatedApparentDensity);
+      } else {
+        console.log('update other layer');
+        //if ths is not the first or last we update the previous layer to the next layer
+        var prevLayer = coatings[this.coatingIndex - 1];
+        var nextLayer = coatings[this.coatingIndex];
+        nextLayer.set('diameter', prevLayer.coatedDiameter);
+        nextLayer.set('apparentDensity', prevLayer.coatedApparentDensity);
+        nextLayer.set('assay', prevLayer.coatedAssay);
+      }
+    },
+    
+    _computeDiameterIndex: function(coatingIndex) {
+      return coatingIndex + 1;
     },
     
     _passValues: function() {
@@ -413,29 +461,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         //we get all the coating pages using polyer API - returns ARRAY!
         var coatings = document.querySelectorAll('dd-coating-dashboard');
         var capsule = document.querySelector('dd-capsule-dashboard');
-        //we figure out what page index we are by looping through the pages
-        //app.pages is a global variable defined in app.js
-        var currentIndex;
-        var len = app.pages.length;
-        for(var i = 0; i < len; i++) {
-          //app is a the global document with a pages array
-          if (app.pages[i].pageName === this.pageName) {
-            //use polymer array API to remove the index of pages and call notifiers
-            currentIndex = i;
-            break;
-          }
-        }
+        
         //if the layer is not the last we update the next coating layers values
         //if the layer is the last we update the capsule layers
         //again always using polymer set api
-        if(currentIndex + 1 < len) {
-          coatings[currentIndex + 1].set('diameter', coatings[currentIndex].coatedDiameter);
-          coatings[currentIndex + 1].set('apparentDensity', coatings[currentIndex].coatedApparentDensity);
-          coatings[currentIndex + 1].set('assay', coatings[currentIndex].coatedAssay);
+        if(this.coatingIndex + 1 < coatings.length) {
+          coatings[this.coatingIndex + 1].set('diameter', coatings[this.coatingIndex].coatedDiameter);
+          coatings[this.coatingIndex + 1].set('apparentDensity', coatings[this.coatingIndex].coatedApparentDensity);
+          coatings[this.coatingIndex + 1].set('assay', coatings[this.coatingIndex].coatedAssay);
         } else {
-          capsule.set('diameter', coatings[currentIndex].coatedDiameter);
-          capsule.set('apparentDensity', coatings[currentIndex].coatedApparentDensity);
-          capsule.set('assay', coatings[currentIndex].coatedAssay);
+          capsule.set('diameter', coatings[this.coatingIndex].coatedDiameter);
+          capsule.set('apparentDensity', coatings[this.coatingIndex].coatedApparentDensity);
+          capsule.set('assay', coatings[this.coatingIndex].coatedAssay);
           this.fire('dd-last-diameter-change');
         }
       }, 10);

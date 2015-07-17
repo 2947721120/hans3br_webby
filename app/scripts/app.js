@@ -68,7 +68,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   
   //event fired when the capsule dashboard changes the fill percent
   window.addEventListener('dd-capsule-change', function() {
-    console.log('capsule fill changed');
     var capsuleCards = document.querySelectorAll('dd-capsule-card');
     for(var i=0; i<capsuleCards.length; i++) {
       capsuleCards[i].updateValues();
@@ -106,14 +105,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 };
     //use polymer array api to push and notify of changes            
     app.push('pages', temp);
-    //after adding a layer we update the values
-    //updating only the core will fire the chain to update the other layers
-    var core = document.querySelector('dd-core-dashboard');
-    var coatings = document.querySelectorAll('dd-coating-dashboard');
-    //set the intial coating layer using the 
-    coatings[0].set('diameter', core.diameter);
-    coatings[0].set('apparentDensity', core.apparentDensity);
-    coatings[0].set('assay', core.assay);
   };
 
 })(document);

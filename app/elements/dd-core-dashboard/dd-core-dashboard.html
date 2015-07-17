@@ -23,6 +23,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       overflow: auto;
     }
     
+    .height-limit {
+      max-height: 324px;
+    }
+    
     #productSelectionCard {
       background-image: url('../../images/SUGLETS-Page.jpg');
       background-size: cover;
@@ -44,7 +48,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     
     <div class='mdl-grid'>
       
-      <div id='productSelectionCard' class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--3-col mdl-cell--4-col-phone' on-tap='_fireOpenSugletDialog'>
+      <div 
+        id='productSelectionCard' 
+        class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--3-col mdl-cell--4-col-phone height-limit' 
+        on-tap='_fireOpenSugletDialog'>
         
         <div class='mdl-card__title'>
           <h5 class='mdl-card__title-text'>{{sugletName}}</h5>
@@ -56,7 +63,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         
       </div>
       
-      <div class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col'>
+      <div class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--3-col mdl-cell--4-col-phone'>
         
         <div class='mdl-card__title'>
           <h5 class='mdl-card__title-text'>Particle Details</h5>
@@ -107,6 +114,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </dd-input>
               
            <dd-input 
+            locked
             val='[[bulkDensity]]' 
             decimals='2' 
             title='Bulk Density'
@@ -121,11 +129,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </div>
       
       <dd-sphere-card 
-        class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col'
+        class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--3-col mdl-cell--4-col-phone height-limit'
         layer-density='[[apparentDensity]]'>
       </dd-sphere-card>
       
-      <div class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col'>
+      <div class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--3-col mdl-cell--4-col-phone'>
         <div class='mdl-card__title'>
           <h5 class='mdl-card__title-text'>Theoretical Details</h5>
         </div>
@@ -133,6 +141,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <div class='outputs'>
           
           <dd-input 
+            locked
             val='[[surfaceArea]]' 
             decimals='4' 
             title='Surface Area'
@@ -141,6 +150,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </dd-input>
           
           <dd-input 
+            locked
             val='[[volume]]' 
             decimals='4' 
             title='Volume'
@@ -149,6 +159,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </dd-input>
           
           <dd-input 
+            locked
             val='[[surfaceAreaToVolume]]' 
             decimals='4' 
             title='SA to Volume'
@@ -159,17 +170,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </dd-input>
           
           <dd-input 
+            locked
             val='[[particleCount]]' 
             decimals='0'
             title='Particle Count'
             units='count/g'
-            details='The mean particles starting radius in microns.'>
+            details='The theoretical number of particles per gram of material.'>
           </dd-input>
           
           <dd-input 
+            locked
             val='[[totalSurfaceArea]]' 
             decimals='2'
-            title='Total Surface Area'
+            title='Specific SA'
             units='cm^2/g'
             details='The surface area of a single sphere with 
               the a <span>{{core.diameter}}</span> &mu;m diameter.'>
@@ -180,14 +193,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </div>
       
       <dd-capsule-card 
-        class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col'
+        class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--3-col mdl-cell--4-col-phone height-limit'
         capsule-fill-percent='0.4'
         capsule-size='5'>
       </dd-capsule-card>
-      
-      <dd-summary-card 
-        class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--8-col'>
-      </dd-summary-card>
       
     </div>
     

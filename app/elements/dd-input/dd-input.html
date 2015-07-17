@@ -13,7 +13,17 @@ a title and description which collapses on click
   
     :host {
       display: block;
-      margin-right: 16px;
+    }
+    
+    .detail_text {
+      margin: 12px 24px;
+      text-align: justify;
+      font-size: 12px;
+    }
+    
+    paper-slider {
+      display: flex;
+      margin: 12px auto;
     }
     
     paper-icon-button {
@@ -46,20 +56,14 @@ a title and description which collapses on click
       margin: 0;
     }
     
-    ::content .description {
-      display: none;
-    }
-    
     
   </style>
   
   <template>
       
-    <paper-item class='layout horizontal center mdl-card__subtitle-text' disabled$='{{hide}}'>
+    <paper-item class='layout horizontal center mdl-card__subtitle-text'>
       
-      <paper-icon-button icon='icons:info-outline' hidden$='{{selectMode}}' on-tap='_onInfoButtonTap'></paper-icon-button>
-      
-      <paper-checkbox id='hidebox' on-change='_toggleHide' hidden$='{{!selectMode}}'></paper-checkbox>
+      <paper-icon-button icon='icons:info-outline' on-tap='toggleDetails'></paper-icon-button>
       
       <div class='flex'>{{title}}</div>
       
@@ -70,14 +74,27 @@ a title and description which collapses on click
         type='number'
         max='{{max}}'
         min='{{min}}'
-        step='{{_step}}'>
+        step='{{_step}}'
+        disabled$='{{locked}}'>
       </input>
       
       <div>{{units}}</div>
       
     </paper-item>
     
-    <paper-toast id='toast' text='{{_toastText}}'></paper-toast>
+    <iron-collapse id='collapse'>
+      
+      <div class='detail_text mdl-card__subtitle-text'>{{details}}</div>
+      
+      <paper-slider
+        hidden$='{{locked}}'
+        id='slider'
+        min='{{min}}'
+        max='{{max}}'
+        step='{{_step}}'>
+      </paper-slider>
+      
+    </iron-collapse>
     
   </template>
   
@@ -105,16 +122,15 @@ a title and description which collapses on click
         value: ''
       },
       
-      selectMode: {
-        type: Boolean,
-        value: false, 
-        observer: '_toggleSelectMode'
-      },
-      
       hide: {
         type: Boolean, 
         value: false,
         observer: '_hideChanged'
+      },
+      
+      locked: {
+        type: Boolean,
+        value: false
       },
       
       val: {
@@ -142,17 +158,29 @@ a title and description which collapses on click
       _step: {
         type: Number,
         computed: '_computeStep(decimals)'
-      },
-      
-      toastText: {
-        type: String,
-        computed: '_computeToastText(min, max)'
       }
       
     },
     
-    ready: function() {
-      this.$.hidebox.checked = !this.hide;
+    listeners: {
+      'immediate-value-change': '_sliderImmediateValueChange',
+      'value-change': '_sliderValueChange'
+    },
+    
+    ready: function(){
+      this.$.slider.value = this.val;
+    },
+    
+    _sliderImmediateValueChange: function(event){
+      this.val = this.$.slider.immediateValue;
+    },
+    
+    _sliderValueChange: function(event){
+      this.val = this.$.slider.value;
+    },
+    
+    toggleDetails: function() {
+      this.$.collapse.toggle();
     },
     
     _valChanged: function(newValue, oldValue) {
@@ -169,12 +197,13 @@ a title and description which collapses on click
     _onInput: function(e) {
       if(e.target.value < this.min){
         this.val = this.min;  
-        this.$.toast.show();
+        this.$.slider.value = this.min;
       } else if (e.target.value > this.max){
         this.val = this.max; 
-        this.$.toast.show();
+        this.$.slider.value = this.max;
       } else {
         this.val = e.target.value;
+        this.$.slider.value = e.target.value;
       }
     },
     
@@ -209,10 +238,6 @@ a title and description which collapses on click
     _computeStep: function(dec) {
       return 1 / Math.pow(10, dec);
     },
-    
-    _computeToastText: function(min, max) {
-      return 'Value must be between ' + min + ' and ' + max + '.';
-    }
     
 });
 </script>
