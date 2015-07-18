@@ -13,9 +13,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <dom-module id="dd-capsule-dashboard">
   
   <style is='custom-style'>
-    :host {
-      display: block;
-    }
     
     div.mdl-cell {
       background: #fff;
@@ -48,7 +45,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     
     <div class='mdl-grid'>
       
-      <div class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--3-col mdl-cell--4-col-phone'>
+      <div class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col'>
         
         <div class='mdl-card__title'>
           <h5 class='mdl-card__title-text'>Final Particle</h5>
@@ -123,7 +120,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         
       </div>
       
-      <div class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--3-col mdl-cell--4-col-phone'>
+      <div class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col'>
         
         <div class='mdl-card__title'>
           <h5 class='mdl-card__title-text'>Capsule Details</h5>
@@ -132,6 +129,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <div class='inputs'>
           
           <dd-input 
+            locked$='{{lockVolume}}'
             val='{{capsuleVolumeMax}}' 
             decimals='2' 
             min='0' 
@@ -171,7 +169,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         
       </div>
       
-      <div class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--3-col mdl-cell--4-col-phone'>
+      <div class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col'>
         <div class='mdl-card__title'>
           <h5 class='mdl-card__title-text'>Dose Details</h5>
         </div>
@@ -213,7 +211,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         
       </div>
       
-      <div class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--3-col mdl-cell--4-col-phone'>
+      <div class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col'>
         <div class='mdl-card__title'>
           <h5 class='mdl-card__title-text'>Filled Capsules</h5>
         </div>
@@ -346,6 +344,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       capsuleFillPercent: {
         type: Number,
         computed: '_calcCapsuleFillPercent(capsuleFillVolume, capsuleVolumeMax)'
+      }, 
+      
+      lockVolume: {
+        type: Boolean,
+        computed: '_computeLockVolume(capsuleSize)'
       }
       
     },
@@ -430,7 +433,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       
     _fireOpenCapsuleDialog: function(e) {
       this.fire('dd-open-capsule-dialog');
+    },
+    
+    _computeLockVolume: function(capsuleSize) {
+      if(capsuleSize == 'Custom Capsule') {
+        return false;
+      } else {
+        return true;
+      }
     }
+    
     
   });
 </script>

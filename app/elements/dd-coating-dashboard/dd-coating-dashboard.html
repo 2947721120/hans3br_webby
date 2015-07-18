@@ -13,9 +13,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <dom-module id="dd-coating-dashboard">
    
    <style is='custom-style'>
-    :host {
-      display: block;
-    }
+    
     
     div.mdl-cell {
       background: #fff;
@@ -27,20 +25,35 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       max-height: 324px;
     }
     
-    #productSelectionCard {
+    .chip {
+      display: flex;
+      align-items: center;
+    }
+    
+    #applicationSelectionChip{
+      background-color: var(--default-primary-color);
+      justify-content: center;
+      margin-bottom: 6px;
+    }
+    
+    h5.mdl-card__title-text.white {
+      color: white;
+    }
+    
+    #productSelectionChip {
       background-image: url('../../images/Opadry-II-Page.jpg');
       background-size: cover;
       background-color: lightgray;
       background-blend-mode: overlay;
       justify-content: center;
+      margin-top: 6px;
     }
     
-    #productSelectionCard > .mdl-card__title {
-      flex-direction: column;
-    }
-    
-    #productSelectionCard > .mdl-card__title > h5 {
-      align-self: center;
+    paper-fab {
+      position: fixed;
+      bottom: 36px;
+      right: 36px;
+      z-index: 2;
     }
   </style>
   
@@ -48,7 +61,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     
     <div class='mdl-grid'>
       
-      <div class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--3-col mdl-cell--4-col-phone'>
+      <div class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col'>
         
         <div class='mdl-card__title'>
           <h5 class='mdl-card__title-text'>Pre-coated Particle</h5>
@@ -107,22 +120,27 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         
       </div>
       
-      <div 
-        id='productSelectionCard' 
-        class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--3-col mdl-cell--4-col-phone height-limit' 
-        on-tap='_fireOpenCoatingDialog'>
+      <div class='layout vertical height-limit mdl-card mdl-cell mdl-cell--3-col mdl-cell--4-col-phone'>
         
-        <div class='mdl-card__title'>
-          <h5 class='mdl-card__title-text'>{{coatingApplication}}</h5>
+        <div id='applicationSelectionChip'
+          class='flex mdl-shadow--2dp chip' 
+          on-tap='_fireOpenApplicationDialog'>
+          <div class='mdl-card__title layout vertical center-center'>
+            <h5 class='mdl-card__title-text white'>{{coatingApplication}}</h5>
+          </div>
         </div>
         
-        <div class='mdl-card__title'>
-          <h5 class='mdl-card__subtitle-text'>{{coatingFamily}}</h5>
+        <div id='productSelectionChip'
+          class='flex mdl-shadow--2dp chip' 
+          on-tap='_fireOpenCoatingDialog'>
+          <div class='mdl-card__title'>
+            <h5 class='mdl-card__title-text'>{{coatingFamily}}</h5>
+          </div>
         </div>
         
       </div>
       
-      <div class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--3-col mdl-cell--4-col-phone'>
+      <div class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col'>
         
         <div class='mdl-card__title'>
           <h5 class='mdl-card__title-text'>Coating Details</h5>
@@ -174,7 +192,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         layer-index='{{_computeDiameterIndex(coatingIndex)}}'>
       </dd-sphere-card>
       
-      <div class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--3-col mdl-cell--4-col-phone'>
+      <div class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col'>
         <div class='mdl-card__title'>
           <h5 class='mdl-card__title-text'>Coated Particle</h5>
         </div>
@@ -225,7 +243,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         
       </div>
       
-      <div class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--3-col mdl-cell--4-col-phone'>
+      <div class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col'>
         <div class='mdl-card__title'>
           <h5 class='mdl-card__title-text'>Film Properties</h5>
         </div>
@@ -271,12 +289,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </dd-capsule-card>
       
     </div>
+      
+    <paper-fab icon='icons:arrow-forward' on-tap='_nextPage'></paper-fab>
     
   </template>
   
 </dom-module>
 <script>
-(function() {
   Polymer({
     
     is: 'dd-coating-dashboard',
@@ -301,14 +320,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       coatingApplication: {
         type: String,
         value: 'Coating Layer',
-        notify: true,
         observer: '_setupPage'
       },
       
       coatingFamily: {
         type: String,
         value: 'Opadry YS-1',
-        notify: true,
+        observer: '_coatingFamilyChanged'
       },
       
       filmDensity: {
@@ -479,22 +497,45 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     },
     
     _setupPage: function(newValue, oldValue) {
+      //we update the pages array with new page title
+      var path = 'pages.' + this.coatingIndex + '.pageTitle';
+      app.set(path, newValue);
+      //now set the page up as needed
       this.drugPercent = 0;
       this.$.sa2ft.hide = true;
       this.$.drugPercent.hide = true;
       if(newValue == 'Drug Layering') {
         this.$.drugPercent.hide = false;
-        this.drugPercent = 50;
+        this.drugPercent = 70;
+        this.coatingFamily = 'Opadry 03A';
+        this.filmDensity = 1.4;
+        this.wg = 25;
       } else if (newValue == 'Seal Coating') {
-        
+        this.coatingFamily = 'Opadry 03A';
+        this.filmDensity = 1.4;
+        this.wg = 5;
       } else if(newValue == 'Enteric Coating') {
-        
+        this.coatingFamily = 'Acryleze II';
+        this.filmDensity = 1.6;
+        this.wg = 32;
       } else if(newValue == 'Barrier Membrane') {
         this.$.sa2ft.hide = false;
+        this.coatingFamily = 'Surelease';
+        this.filmDensity = 1.01;
+        this.wg = 14;
       } else {
+        this.coatingFamily = 'Opadry YS-1';
+        this.filmDensity = 1.02;
         this.$.drugPercent.hide = false;
         this.$.sa2ft.hide = false;
+        this.wg = 12;
       }
+    },
+    
+    _coatingFamilyChanged: function(newValue, oldValue) {
+      //we update the pages array with new page title
+      var path = 'pages.' + this.coatingIndex + '.productTitle';
+      app.set(path, newValue);
     },
     
     /**
@@ -572,9 +613,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     },
     
     _fireOpenCoatingDialog: function(e) {
-      this.fire('dd-open-coating-dialog');
-    }
+      this.fire('dd-open-coating-dialog', {application: this.coatingApplication, coating: this.coatingFamily});
+    },
+
+    _fireOpenApplicationDialog: function(e) {
+      this.fire('dd-open-application-dialog',  {application: this.coatingApplication});
+    },
     
+    _nextPage: function() {
+      if(this.coatingIndex < app.pages.length - 1){
+        var path = '/DosageDesigner/' + app.pages[this.coatingIndex + 1].pageName;
+        page(path);
+      } else {
+        page('/DosageDesigner/Capsule')
+      }
+    }
   });
-})();
 </script>
