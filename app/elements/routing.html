@@ -39,6 +39,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       app.currentPage = 'Capsule';
     });
     
+    page('/DosageDesigner/Report', function () {
+      //we set the page with a short toolbar
+      document.querySelector('#paperHeaderPanel').mode = 'scroll';
+      document.querySelector('dd-report-dashboard')._getData();
+      app.currentPage = 'Report';
+    });
+    
     page('/DosageDesigner/:coating', function (data) {
       //we set the page with a short toolbar
       document.querySelector('#paperHeaderPanel').mode = 'standard';

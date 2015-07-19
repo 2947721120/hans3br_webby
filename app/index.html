@@ -44,6 +44,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   <!-- build:css styles/main.css -->
   <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="styles/summary-print.css" type="text/css" media="print" /> 
   <!-- endbuild-->
 
   <!-- build:js bower_components/webcomponentsjs/webcomponents-lite.min.js -->
@@ -55,7 +56,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <!-- endreplace-->
 </head>
 
-<body unresolved class="fullbleed layout vertical">
+<body >
   <span id="browser-sync-binding"></span>
   <template is="dom-bind" id="app">
 
@@ -90,6 +91,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <paper-item page-name="Capsule">
               <iron-icon icon="maps:local-bar"></iron-icon>
               <span>Capsule</span>
+            </paper-item>
+            
+            <paper-item page-name="Report">
+              <iron-icon icon="icons:list"></iron-icon>
+              <span>Report</span>
             </paper-item>
             
           </paper-menu>
@@ -140,6 +146,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             page-name='Capsule'
             capsule-size='{{capsuleSize}}'>
           </dd-capsule-dashboard>
+          
+          <dd-report-dashboard page-name='Report'></dd-summary-dashboard>
           
         </neon-animated-pages>
       </paper-header-panel>

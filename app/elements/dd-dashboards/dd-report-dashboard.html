@@ -1,0 +1,351 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<dom-module id="dd-report-dashboard">
+  <style>
+    :host {
+      display: block;
+    }
+    
+    .container {
+      margin: 0px 48px;
+    }
+    
+    .overview_chip {
+      background-color: white;
+      height: 48px;
+      width: 124px;
+      border: 3px solid #eee;
+      margin: 16px 0px;
+    }
+    
+    .mdl-data-table {
+      margin: 12px auto 0px 48px;
+    }
+    
+    paper-fab {
+      position: fixed;
+      bottom: 36px;
+      right: 36px;
+      z-index: 2;
+    }
+    
+    .center-text {
+      text-align: center;
+    }
+    
+    .mdl-textfield {
+      margin: 0px 12px;
+      width: auto;
+    }
+    
+    .mdl-textfield__input {
+      font-family: Roboto;
+    }
+    
+    .border_line {
+      min-width: 8px;
+      border-bottom: 4px solid #eee;
+    }
+    
+  </style>
+  <template>
+    
+    <div>
+      <div class='mdl-card__title'>
+        <h5 class='mdl-card__title-text'>Project Information</h5>
+      </div>
+      <div class='container layout horizontal wrap around-justified'>
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+          <input class="mdl-textfield__input" type="text" id="company"/>
+          <label class="mdl-textfield__label" for="company">Company Name</label>
+        </div>
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+          <input class="mdl-textfield__input" type="text" id="contact"/>
+          <label class="mdl-textfield__label" for="contact">Contact Name</label>
+        </div>
+      
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+          <input class="mdl-textfield__input" type="text" id="project"/>
+          <label class="mdl-textfield__label" for="project">Project Name</label>
+        </div>
+        <!--
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+          <textarea class="mdl-textfield__input" type="text" rows="5" maxrows="5"
+           id="details"></textarea>
+          <label class="mdl-textfield__label" for="details">Description</label>
+        </div>
+        -->
+      </div>
+    </div>
+    
+    <div>
+      <div class='mdl-card__title'>
+        <h5 class='mdl-card__title-text'>Project Overview</h5>
+      </div>
+      <div class='container layout horizontal wrap around-justified'>
+        <div class='overview_chip'>
+          <div class='mdl-card__title'>
+            <div class='mdl-card__subtitle-text'>Core</div>
+          </div>
+        </div>
+        <div class='flex layout vertical'>
+          <div class='flex border_line'></div>
+          <div class='flex'></div>
+        </div>
+        <template is='dom-repeat' items='{{tableData}}'>
+          <div class='overview_chip'>
+            <div class='mdl-card__title'>
+              <div class='mdl-card__subtitle-text'>{{item.application}}</div>
+            </div>
+          </div>
+          <div class='flex layout vertical'>
+            <div class='flex border_line'></div>
+            <div class='flex'></div>
+          </div>
+        </template>
+        <div class='overview_chip'>
+          <div class='mdl-card__title'>
+            <div class='mdl-card__subtitle-text'>Capsule</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div>
+      <div class='mdl-card__title'>
+        <h5 class='mdl-card__title-text'>Coating Summary</h5>
+      </div>
+      <table class="mdl-data-table mdl-js-data-table">
+        <thead>
+          <tr>
+            <th class="mdl-data-table__cell--non-numeric">Coating Layer</th>
+            <th class='center-text'>Formulation</th>
+            <th class='center-text'>Weight Gain<br/>%</th>
+            <th class='center-text'>Percent API<br/>%</th>
+            <th class='center-text'>Film Density<br/>(mg/ml)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <template is='dom-repeat' items='{{tableData}}'>
+            <tr>
+              <td class="mdl-data-table__cell--non-numeric">{{item.application}}</td>
+              <td class='center-text'>{{item.coatingFamily}}</td>
+              <td class='center-text'>{{item.wg}}</td>
+              <td class='center-text'>{{item.drugPercent}}</td>
+              <td class='center-text'>{{item.filmDensity}}</td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+    </div>
+    
+    <div>
+      <div class='mdl-card__title'>
+        <h5 class='mdl-card__title-text'>Coated Particle</h5>
+      </div>
+      <table class="mdl-data-table mdl-js-data-table">
+        <thead>
+          <tr>
+            <th class="mdl-data-table__cell--non-numeric">Coating Layer</th>
+            <th class='center-text'>Diameter<br/>(&mu;m)</th>
+            <th class='center-text'>Assay<br/>(mg/g)</th>
+            <th class='center-text'>Apparent Density<br/>(mg/ml)</th>
+            <th class='center-text'>Bulk Density<br/>(mg/ml)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="mdl-data-table__cell--non-numeric">{{coreData.application}}</td>
+            <td class='center-text'>{{coreData.diameter}}</td>
+            <td class='center-text'>{{coreData.assay}}</td>
+            <td class='center-text'>{{coreData.density}}</td>
+            <td class='center-text'>{{coreData.bulkDensity}}</td>
+          </tr>
+          <template is='dom-repeat' items='{{tableData}}'>
+            <tr>
+              <td class="mdl-data-table__cell--non-numeric">{{item.application}}</td>
+              <td class='center-text'>{{item.diameter}}</td>
+              <td class='center-text'>{{item.assay}}</td>
+              <td class='center-text'>{{item.density}}</td>
+              <td class='center-text'>{{item.bulkDensity}}</td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+    </div>
+    
+    <div>
+      <div class='mdl-card__title'>
+        <h5 class='mdl-card__title-text'>Film Properties</h5>
+      </div>
+      <table class="mdl-data-table mdl-js-data-table">
+        <thead>
+          <tr>
+            <th class="mdl-data-table__cell--non-numeric">Coating Layer</th>
+            <th class='center-text'>Film Thickness<br/>(&mu;m)</th>
+            <th class='center-text'>Coating Coverage<br/>(mg/g)</th>
+            <th class='center-text'>SA / FT<br/>(mg/ml)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <template is='dom-repeat' items='{{tableData}}'>
+            <tr>
+              <td class="mdl-data-table__cell--non-numeric">{{item.application}}</td>
+              <td class='center-text'>{{item.filmThickness}}</td>
+              <td class='center-text'>{{item.coverage}}</td>
+              <td class='center-text'>{{item.sa2ft}}</td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+    </div>
+    
+    <div>
+      <div class='mdl-card__title'>
+        <h5 class='mdl-card__title-text'>Capsule Summary</h5>
+      </div>
+      <table class='mdl-data-table mdl-js-data-table'>
+        <thead>
+          <tr>
+            <th class="mdl-data-table__cell--non-numeric">Characteristic</th>
+            <th class='center-text'>Units</th>
+            <th class='center-text'>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class='mdl-data-table__cell--non-numeric'>Therapuetic Dose</td>
+            <td class='center-text'>mg</td>
+            <td class='center-text'>{{capsuleData.dose}}</td>
+          </tr>
+          <tr>
+            <td class='mdl-data-table__cell--non-numeric'>Capsule</td>
+            <td class='center-text'></td>
+            <td class='center-text'>{{capsuleData.capsuleSize}}</td>
+          </tr>
+          <tr>
+            <td class='mdl-data-table__cell--non-numeric'>Maximum Volume</td>
+            <td class='center-text'>ml</td>
+            <td class='center-text'>{{capsuleData.maxVolume}}</td>
+          </tr>
+          <tr>
+            <td class='mdl-data-table__cell--non-numeric'>Restricted Volume</td>
+            <td class='center-text'>ml</td>
+            <td class='center-text'>{{capsuleData.restrictedVolume}}</td>
+          </tr>
+          <tr>
+            <td class='mdl-data-table__cell--non-numeric'>Capsule Count</td>
+            <td class='center-text'></td>
+            <td class='center-text'>{{capsuleData.capsuleCount}}</td>
+          </tr>
+          <tr>
+            <td class='mdl-data-table__cell--non-numeric'>Fill Weight</td>
+            <td class='center-text'>mg/capsule</td>
+            <td class='center-text'>{{capsuleData.fillWeight}}</td>
+          </tr>
+          <tr>
+            <td class='mdl-data-table__cell--non-numeric'>Fill Percent</td>
+            <td class='center-text'>%</td>
+            <td class='center-text'>{{capsuleData.fillPercent}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <paper-fab icon='icons:print' on-tap='_printPage'></paper-fab>
+    
+  </template>
+</dom-module>
+<script>
+  Polymer({
+    
+    is: 'dd-report-dashboard',
+
+    properties: {
+      
+      tableData: {
+        type: Array,
+        value: 
+          function() {
+            return [];
+          }
+      },
+      
+      capsuleData: {
+        type: Array,
+        value: 
+          function() {
+            return {};
+          }
+      },
+      
+    },
+    
+    attached: function(){
+      this._getData();
+    },
+    
+    _getData: function(){
+      
+      var core = document.querySelector('dd-core-dashboard');
+      this.coreData = {
+        diameter: core.diameter.toFixed(1),
+        assay: core.assay.toFixed(2),
+        density: core.apparentDensity.toFixed(2),
+        bulkDensity: core.bulkDensity.toFixed(2), 
+        sugletName: core.sugletName,
+        application: 'Core Material'
+      };
+      
+      this.tableData = [];
+      var coatingElements = document.querySelectorAll('dd-coating-dashboard');
+      for(var i=0; i<coatingElements.length; i++){
+        var el = coatingElements[i];
+        var temp = {
+            diameter: el.coatedDiameter.toFixed(1),
+            filmThickness: el.filmThickness.toFixed(2),
+            coverage: el.coatingCoverage.toFixed(2),
+            assay: el.coatedAssay.toFixed(2),
+            density: el.coatedApparentDensity.toFixed(2),
+            bulkDensity: el.coatedBulkDensity.toFixed(2), 
+            sa2ft: el.sa2ft.toFixed(3),
+            wg: el.wg.toFixed(1),
+            filmDensity: el.filmDensity.toFixed(2),
+            drugPercent: el.drugPercent.toFixed(1),
+            coatingFamily: el.coatingFamily,
+            application: el.coatingApplication
+        };
+        this.push('tableData', temp); 
+      }
+      
+      
+      var cap = document.querySelector('dd-capsule-dashboard');
+      this.capsuleData = {
+        capsuleSize: cap.capsuleSize,
+        maxVolume: cap.capsuleVolumeMax.toFixed(2),
+        restrictedVolume: cap.capsuleVolumeLimit.toFixed(2),
+        dose: cap.dose.toFixed(2),
+        capsuleCount: cap.capsuleCount.toFixed(0),
+        fillWeight: cap.capsuleFillWeight.toFixed(2),
+        fillPercent: cap.capsuleFillPercent.toFixed(1)
+      };
+      
+    },
+    
+    _printPage: function() {
+      this._getData();
+      document.querySelector('body').appendChild(this);
+      window.print();
+      document.querySelector('neon-animated-pages').appendChild(this);
+    }
+  });
+</script>
