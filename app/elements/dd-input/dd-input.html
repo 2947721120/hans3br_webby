@@ -5,7 +5,7 @@ a title and description which collapses on click
 
 -->
 
-<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel='import' href='../../bower_components/polymer/polymer.html'>
 
 <dom-module id='dd-input'>
   
@@ -69,7 +69,7 @@ a title and description which collapses on click
       
       <input  
         id='put'
-        class="mdl-textfield__input"
+        class='mdl-textfield__input'
         on-change='_onInput'
         type='number'
         max='{{max}}'
@@ -109,7 +109,7 @@ a title and description which collapses on click
       
       title: {
         type: String,
-        value: "Title Goes Here",
+        value: 'Title Goes Here',
       },
       
       units: {
@@ -171,11 +171,11 @@ a title and description which collapses on click
       this.$.slider.value = this.val;
     },
     
-    _sliderImmediateValueChange: function(event){
+    _sliderImmediateValueChange: function(){
       this.val = this.$.slider.immediateValue;
     },
     
-    _sliderValueChange: function(event){
+    _sliderValueChange: function(){
       this.val = this.$.slider.value;
     },
     
@@ -183,7 +183,7 @@ a title and description which collapses on click
       this.$.collapse.toggle();
     },
     
-    _valChanged: function(newValue, oldValue) {
+    _valChanged: function(newValue) {
       //we use the if else in case the script runs before the decimal variable is defined
       if(this.decimals) {
         var decimalFactor = Math.pow(10, this.decimals);
@@ -211,7 +211,7 @@ a title and description which collapses on click
       this.toggleAttribute('hidden', this.hide);
     },
     
-    _toggleSelectMode: function(newValue, oldValue) {
+    _toggleSelectMode: function(newValue) {
       if(newValue) {
         //If we are in select mode we want to show all elements regardless if they
         //are currently selected as hidden

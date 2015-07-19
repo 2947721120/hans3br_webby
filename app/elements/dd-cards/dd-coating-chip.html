@@ -102,14 +102,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       
     },
     
-    _openPage: function(event) {
+    _openPage: function() {
       //we access the 'global' app and set the current page
       //this will then fire the iron-selected function defined in the drawer panel
       //which in turn causes causes the pagination
       app.currentPage = this.pageName;
     },
     
-    _removePage: function(event) {
+    _removePage: function() {
       var len = app.pages.length;
       for(var i = 0; i < len; i++) {
         //app is a the global document with a pages array

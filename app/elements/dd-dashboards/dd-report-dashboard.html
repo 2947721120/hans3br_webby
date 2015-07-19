@@ -56,6 +56,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       border-bottom: 4px solid #eee;
     }
     
+    @media print {
+      paper-fab {
+        display: none;
+      }
+    }
+    
   </style>
   <template>
     
@@ -230,7 +236,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <tr>
             <td class='mdl-data-table__cell--non-numeric'>Capsule</td>
             <td class='center-text'></td>
-            <td class='center-text'>{{capsuleData.capsuleSize}}</td>
+            <td class='center-text mdl-data-table__cell--non-numeric'>{{capsuleData.capsuleSize}}</td>
           </tr>
           <tr>
             <td class='mdl-data-table__cell--non-numeric'>Maximum Volume</td>
@@ -296,53 +302,56 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     
     _getData: function(){
       
-      var core = document.querySelector('dd-core-dashboard');
-      this.coreData = {
-        diameter: core.diameter.toFixed(1),
-        assay: core.assay.toFixed(2),
-        density: core.apparentDensity.toFixed(2),
-        bulkDensity: core.bulkDensity.toFixed(2), 
-        sugletName: core.sugletName,
-        application: 'Core Material'
-      };
-      
-      this.tableData = [];
-      var coatingElements = document.querySelectorAll('dd-coating-dashboard');
-      for(var i=0; i<coatingElements.length; i++){
-        var el = coatingElements[i];
-        var temp = {
-            diameter: el.coatedDiameter.toFixed(1),
-            filmThickness: el.filmThickness.toFixed(2),
-            coverage: el.coatingCoverage.toFixed(2),
-            assay: el.coatedAssay.toFixed(2),
-            density: el.coatedApparentDensity.toFixed(2),
-            bulkDensity: el.coatedBulkDensity.toFixed(2), 
-            sa2ft: el.sa2ft.toFixed(3),
-            wg: el.wg.toFixed(1),
-            filmDensity: el.filmDensity.toFixed(2),
-            drugPercent: el.drugPercent.toFixed(1),
-            coatingFamily: el.coatingFamily,
-            application: el.coatingApplication
+      this.async(function(){
+        
+        var core = document.querySelector('dd-core-dashboard');
+        this.coreData = {
+          diameter: core.diameter.toFixed(1),
+          assay: core.assay.toFixed(2),
+          density: core.apparentDensity.toFixed(2),
+          bulkDensity: core.bulkDensity.toFixed(2), 
+          sugletName: core.sugletName,
+          application: 'Core Material'
         };
-        this.push('tableData', temp); 
-      }
-      
-      
-      var cap = document.querySelector('dd-capsule-dashboard');
-      this.capsuleData = {
-        capsuleSize: cap.capsuleSize,
-        maxVolume: cap.capsuleVolumeMax.toFixed(2),
-        restrictedVolume: cap.capsuleVolumeLimit.toFixed(2),
-        dose: cap.dose.toFixed(2),
-        capsuleCount: cap.capsuleCount.toFixed(0),
-        fillWeight: cap.capsuleFillWeight.toFixed(2),
-        fillPercent: cap.capsuleFillPercent.toFixed(1)
-      };
-      
+        
+        this.tableData = [];
+        var coatingElements = document.querySelectorAll('dd-coating-dashboard');
+        for(var i=0; i<coatingElements.length; i++){
+          var el = coatingElements[i];
+          var temp = {
+              diameter: el.coatedDiameter.toFixed(1),
+              filmThickness: el.filmThickness.toFixed(2),
+              coverage: el.coatingCoverage.toFixed(2),
+              assay: el.coatedAssay.toFixed(2),
+              density: el.coatedApparentDensity.toFixed(2),
+              bulkDensity: el.coatedBulkDensity.toFixed(2), 
+              sa2ft: el.sa2ft.toFixed(3),
+              wg: el.wg.toFixed(1),
+              filmDensity: el.filmDensity.toFixed(2),
+              drugPercent: el.drugPercent.toFixed(1),
+              coatingFamily: el.coatingFamily,
+              application: el.coatingApplication
+          };
+          this.push('tableData', temp); 
+        }
+        
+        
+        var cap = document.querySelector('dd-capsule-dashboard');
+        this.capsuleData = {
+          capsuleSize: cap.capsuleSize,
+          maxVolume: cap.capsuleVolumeMax.toFixed(2),
+          restrictedVolume: cap.capsuleVolumeLimit.toFixed(2),
+          dose: cap.dose.toFixed(2),
+          capsuleCount: cap.capsuleCount.toFixed(0),
+          fillWeight: cap.capsuleFillWeight.toFixed(2),
+          fillPercent: cap.capsuleFillPercent.toFixed(1)
+        };
+        
+      }, 500);
+        
     },
     
     _printPage: function() {
-      this._getData();
       document.querySelector('body').appendChild(this);
       window.print();
       document.querySelector('neon-animated-pages').appendChild(this);

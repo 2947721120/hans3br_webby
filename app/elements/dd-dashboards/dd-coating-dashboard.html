@@ -430,7 +430,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       //get all the coating layer - current layer is alredy removed
       var coatings = document.querySelectorAll('dd-coating-dashboard');
       //set the intial coating layer using the 
-      if(this.coatingIndex == 0) {
+      if(this.coatingIndex === 0) {
         console.log('update from core');
         //if this was the first coating layer we update the next layer with the core data
         var core = document.querySelector('dd-core-dashboard');
@@ -439,7 +439,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         nextLayer.set('diameter', core.diameter);
         nextLayer.set('apparentDensity', core.pparentDensity);
         nextLayer.set('assay', core.assay);
-      } else if(this.coatingIndex == coatings.length) { //we do not remove 1 because a layer was detaached alredy and testing if it was the last layer
+      } else if(this.coatingIndex === coatings.length) { //we do not remove 1 because a layer was detaached alredy and testing if it was the last layer
         console.log('update capsule');
         //if this was the last layer we get the previous layer and update the capusle
         var capsule = document.querySelector('dd-capsule-dashboard');
@@ -484,7 +484,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }, 10);
     },
     
-    _setupPage: function(newValue, oldValue) {
+    _setupPage: function(newValue) {
       //we update the pages array with new page title
       var path = 'pages.' + this.coatingIndex + '.pageTitle';
       app.set(path, newValue);
@@ -492,21 +492,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       this.drugPercent = 0;
       this.$.sa2ft.hide = true;
       this.$.drugPercent.hide = true;
-      if(newValue == 'Drug Layering') {
+      if(newValue === 'Drug Layering') {
         this.$.drugPercent.hide = false;
         this.drugPercent = 70;
         this.coatingFamily = 'Opadry 03A';
         this.filmDensity = 1.4;
         this.wg = 25;
-      } else if (newValue == 'Seal Coating') {
+      } else if (newValue === 'Seal Coating') {
         this.coatingFamily = 'Opadry 03A';
         this.filmDensity = 1.4;
         this.wg = 5;
-      } else if(newValue == 'Enteric Coating') {
+      } else if(newValue === 'Enteric Coating') {
         this.coatingFamily = 'Acryleze II';
         this.filmDensity = 1.6;
         this.wg = 32;
-      } else if(newValue == 'Barrier Membrane') {
+      } else if(newValue === 'Barrier Membrane') {
         this.$.sa2ft.hide = false;
         this.coatingFamily = 'Surelease';
         this.filmDensity = 1.01;
@@ -520,7 +520,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     },
     
-    _coatingFamilyChanged: function(newValue, oldValue) {
+    _coatingFamilyChanged: function(newValue) {
       //we update the pages array with new page title
       var path = 'pages.' + this.coatingIndex + '.productTitle';
       app.set(path, newValue);
@@ -600,11 +600,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       return totalSurfaceArea / filmThick;   
     },
     
-    _fireOpenCoatingDialog: function(e) {
+    _fireOpenCoatingDialog: function() {
       this.fire('dd-open-coating-dialog', {application: this.coatingApplication, coating: this.coatingFamily});
     },
 
-    _fireOpenApplicationDialog: function(e) {
+    _fireOpenApplicationDialog: function() {
       this.fire('dd-open-application-dialog',  {application: this.coatingApplication});
     },
     

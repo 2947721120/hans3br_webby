@@ -38,7 +38,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </div>
       
       <div class='flex layout horizontal center-center'>
-        <svg id='sphere_svg'></svg>
+        <svg id='sphereSvg'></svg>
       </div>
         
       <iron-selector class='layout horizontal center-center' selected='{{layerIndex}}' activate-event=''>
@@ -137,12 +137,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           var layerIndex = diameters.length - this.layerIndex - 1;
           
           //set the size
-          var svg = d3.select(this.$.sphere_svg)
-                      .style('height', this._height)
-                      .style('width', this._width);
+          d3.select(this.$.sphereSvg)
+            .style('height', this._height)
+            .style('width', this._width);
                       
           //attach the data and add circles as needed. Filter on index and change color to highlight
-          var circles =  d3.select(this.$.sphere_svg)
+          var circles =  d3.select(this.$.sphereSvg)
                             .selectAll('circle')
                             .data(diameters.sort(d3.descending));
                             
@@ -179,7 +179,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       return  d3.scale
                 .linear()
                 .domain([minValue, maxValue])
-                .range(["#C5CAE9", "#303F9F"]);
+                .range(['#C5CAE9', '#303F9F']);
     }, 
     
     _getHighlightColor: function() {
@@ -189,15 +189,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       var pinkScale = d3.scale
                         .linear()
                         .domain([0, 3])
-                        .range(["#F48FB1", "#C2185B"]);
+                        .range(['#F48FB1', '#C2185B']);
       var grayScale = d3.scale
                         .linear()
                         .domain([0, 3])
-                        .range(["#CFD8DC", "#455A64"]);
-      if(this.layerIndex != 0) {
+                        .range(['#CFD8DC', '#455A64']);
+      if(this.layerIndex !== 0) {
         col = pinkScale(this.layerDensity);
       } else {
-        col = grayScale(this.layerDensity)
+        col = grayScale(this.layerDensity);
       }
       return col;
     },

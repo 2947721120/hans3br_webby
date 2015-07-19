@@ -17,19 +17,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   //create the default coating pages to show
   app.pages = [
     {
-      pageName: "CoatingLayer1", 
-      pageTitle: "Drug Layering",
-      productTitle: "Opadry 03K",
+      pageName: 'CoatingLayer1', 
+      pageTitle: 'Drug Layering',
+      productTitle: 'Opadry 03K',
     },
     {
-      pageName: "CoatingLayer2", 
-      pageTitle: "Seal Coating",
-      productTitle: "Opadry YS-1",
+      pageName: 'CoatingLayer2', 
+      pageTitle: 'Seal Coating',
+      productTitle: 'Opadry YS-1',
     },
     {
-      pageName: "CoatingLayer3", 
-      pageTitle: "Barrier Membrane",
-      productTitle: "Surelease",
+      pageName: 'CoatingLayer3', 
+      pageTitle: 'Barrier Membrane',
+      productTitle: 'Surelease',
     }
   ];
   
@@ -45,39 +45,39 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   ];  
   
   app.CAPSULES = [
-    {label:'Size 000', volume:'1.37'},
-    {label:'Size 00', volume:'0.95'},
-    {label:'Size 0', volume:'0.68'},
-    {label:'Size 1', volume:'0.50'},
-    {label:'Size 2', volume:'0.37'},
-    {label:'Size 3', volume:'0.30'},
-    {label:'Size 4', volume:'0.21'},
-    {label:'Size 5', volume:'0.13'},
-    {label:'Custom Capsule', volume:'0.60'}
+    {label:'Size 000', volume:1.37},
+    {label:'Size 00', volume:0.95},
+    {label:'Size 0', volume:0.68},
+    {label:'Size 1', volume:0.50},
+    {label:'Size 2', volume:0.37},
+    {label:'Size 3', volume:0.30},
+    {label:'Size 4', volume:0.21},
+    {label:'Size 5', volume:0.13},
+    {label:'Custom Capsule', volume:0.60}
   ];
   
   app.IR_COATINGS = [
-    {label:'Opadry 03A', density:'1.01'},
-    {label:'Opadry 03K', density:'1.01'},
-    {label:'Opadry YS-1', density:'1.01'},
-    {label:'Opadry II 85F', density:'1.01'},
-    {label:'Custom Binder', density:'1.01'}
+    {label:'Opadry 03A', density:1.01},
+    {label:'Opadry 03K', density:1.01},
+    {label:'Opadry YS-1', density:1.01},
+    {label:'Opadry II 85F', density:1.01},
+    {label:'Custom Binder', density:1.01}
   ];
                         
   app.ENTERIC_COATINGS = [
-    {label:'Acryleze', density:'1.64'},
-    {label:'Acryleze II', density:'1.64'},
-    {label:'Opadry Enteric', density:'1.21'},
-    {label:'Custom Enteric', density:'1.01'}
+    {label:'Acryleze', density:1.64},
+    {label:'Acryleze II', density:1.64},
+    {label:'Opadry Enteric', density:1.21},
+    {label:'Custom Enteric', density:1.01}
  ];
                          
   app.BARRIER_MEMBRANE_COATINGS = [
-    {label:'Surelease', density:'1.01'},
-    {label:'Ethocel', density:'1.21'},
-    {label:'Custom Barrier Membrane', density:'1.01'}
+    {label:'Surelease', density:1.01},
+    {label:'Ethocel', density:1.21},
+    {label:'Custom Barrier Membrane', density:1.01}
   ];
   
-  app.APPLICATIONS = ["Drug Layering", "Seal Coating", "Enteric Coating", "Barrier Membrane", "Custom Coating"];
+  app.APPLICATIONS = ['Drug Layering', 'Seal Coating', 'Enteric Coating', 'Barrier Membrane', 'Custom Coating'];
   
   
   
@@ -99,9 +99,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   window.addEventListener('dd-open-coating-dialog', function(event) {
     // imports are loaded and elements have been registered
     var application = event.detail.application;
-    if(application == 'Enteric Coating'){
+    if(application === 'Enteric Coating'){
       app.coatings = app.ENTERIC_COATINGS;
-    } else if(application == 'Barrier Membrane'){
+    } else if(application === 'Barrier Membrane'){
       app.coatings = app.BARRIER_MEMBRANE_COATINGS;
     } else {
       app.coatings = app.IR_COATINGS;
@@ -144,7 +144,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       drawerPanel.closeDrawer();
     } 
     var pagePath = '/DosageDesigner/';
-    if(this.currentPage != 'DosageDesigner'){
+    if(this.currentPage !== 'DosageDesigner'){
       pagePath = pagePath + this.currentPage;
       page(pagePath);
     } else {
@@ -192,8 +192,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     var newPageName = 'CoatingLayer' + app.coatingLayerNumber;
     var temp = {
                   pageName: newPageName, 
-                  pageTitle: "Coating Layer",
-                  productTitle: "Opadry 03K"
+                  pageTitle: 'Coating Layer',
+                  productTitle: 'Opadry 03K'
                 };
     //use polymer array api to push and notify of changes            
     app.push('pages', temp);
