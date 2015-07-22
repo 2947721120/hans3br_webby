@@ -1,0 +1,461 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="dd-capsule-dashboard">
+  
+  <style is='custom-style'>
+    
+    div.mdl-cell {
+      background: #fff;
+      min-height: 272;
+      overflow: auto;
+    }
+    
+    .height-limit {
+      max-height: 324px;
+    }
+    
+    #productSelectionCard {
+      background-image: url('../../images/StarCap-1500-Page.jpg');
+      background-size: cover;
+      background-color: lightgray;
+      background-blend-mode: overlay;
+      justify-content: center;
+    }
+    
+    #productSelectionCard > .mdl-card__title {
+      flex-direction: column;
+    }
+    
+    #productSelectionCard > .mdl-card__title > h5 {
+      align-self: center;
+    }
+    
+    paper-fab {
+      position: fixed;
+      bottom: 36px;
+      right: 36px;
+      z-index: 2;
+    }
+  </style>
+  
+   <template>
+    
+    <div class='mdl-grid'>
+      
+      <div class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col'>
+        
+        <div class='mdl-card__title'>
+          <h5 class='mdl-card__title-text'>Final Particle</h5>
+        </div>
+        
+        <div class='inputs'>
+          
+          <dd-input 
+            locked
+            val='[[diameter]]' 
+            decimals='1' 
+            min='150' 
+            max='2400'
+            title='Mean Diameter'
+            units='&mu;m'
+            details='The mean diameter of the final coated particle.'>
+          </dd-input>
+            
+          <dd-input 
+            locked
+            val='{{assay}}' 
+            decimals='2' 
+            min='0' 
+            max='1000' 
+            title='Assay'
+            units='mg/g'
+            details='The starting assay for this coating layer in mg per gram of beads. This is typically zero
+              but in the case of custom granulation or ext/sphereonization the particle may contain
+              the active pharmaceutical ingredient.'>
+          </dd-input>
+          
+          <dd-input 
+            locked
+            val='[[apparentDensity]]' 
+            decimals='2' 
+            min='0.5' 
+            max='3'
+            title='Apparent Density'
+            units='g/ml'
+            details='The starting apparent density of this coating layer. This apparent denisty includes the porosity of the material
+              but not the void space between particles.'>
+          </dd-input>
+              
+           <dd-input 
+            locked
+            val='[[bulkDensity]]' 
+            decimals='2' 
+            title='Bulk Density'
+            units='g/ml'
+            details='The estimated starting bulk density of this coating layer. The estimtion is based on the optimal packing conditions
+              of a sphereical particles of 74.048% of the 
+              apparent density of beads.'>
+           </dd-input>    
+        </div>
+        
+      </div>
+      
+      <dd-sphere-card 
+        class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--3-col mdl-cell--4-col-phone'
+        layer-denstiy='[[apparentDensity]]'>
+      </dd-sphere-card>
+      
+      <div id='productSelectionCard' class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--3-col mdl-cell--4-col-phone' on-tap='_fireOpenCapsuleDialog'>
+        
+        <div class='mdl-card__title'>
+          <h5 class='mdl-card__title-text'>Capsule</h5>
+        </div>
+        
+        <div class='mdl-card__title'>
+          <h5 class='mdl-card__subtitle-text'>{{capsuleSize}}</h5>
+        </div>
+        
+      </div>
+      
+      <div class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col'>
+        
+        <div class='mdl-card__title'>
+          <h5 class='mdl-card__title-text'>Capsule Details</h5>
+        </div>
+        
+        <div class='inputs'>
+          
+          <dd-input 
+            locked$='{{lockVolume}}'
+            val='{{capsuleVolumeMax}}' 
+            decimals='2' 
+            min='0' 
+            max='2'
+            title='Maximum Volume'
+            units='ml'
+            details='The volume of the capsule body and head when closed.'>
+          </dd-input>
+          
+          <dd-input 
+            val='{{percentLimit}}' 
+            decimals='1' 
+            min='0' 
+            max='100'
+            title='Fill Restriction'
+            units='%'
+            details='Because of capsule filling operations it is not typical to fill a capsule
+              to the maxiumum volume. The industry standard is 85% of the max capsule
+              volume but this value can be updated to set different targets.'>
+          </dd-input>
+          
+          <dd-input 
+            locked
+            val='[[capsuleVolumeLimit]]' 
+            decimals='2' 
+            min='0' 
+            max='100'
+            title='Restricted Volume'
+            units='ml'
+            details='Because of capsule filling operations it is not typical to fill a capsule
+              to the maxiumum volume. The industry standard is 85% of the max capsule
+              volume is achieved at max with normal capsule filling operations. This value
+              represent this estimate value.'>
+          </dd-input>
+            
+        </div>
+        
+      </div>
+      
+      <div class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col'>
+        <div class='mdl-card__title'>
+          <h5 class='mdl-card__title-text'>Dose Details</h5>
+        </div>
+        
+        <div class='outputs'>
+          
+          <dd-input 
+            val='{{dose}}' 
+            decimals='1'
+            min='0.1'
+            max='250'
+            title='Therapuetic Dose'
+            units='mg'
+            details='The desired therapuetic dose.'>
+          </dd-input>
+          
+          <dd-input 
+            locked
+            val='[[totalFillWeight]]' 
+            decimals='2'
+            title='Total Fill Weight'
+            units='mg'
+            details='Based on the particle assay this is the weight
+            of particles needed to achieve the therapeutic dose.'>
+          </dd-input>
+          
+          <dd-input 
+            locked
+            val='[[totalFillVolume]]' 
+            decimals='2'
+            title='Total Fill Volume'
+            units='ml'
+            details='The apparent density of the coated particle. 
+              The apparent denisty includes the porosity of the material
+              but not the void space between particles.'>
+          </dd-input>
+        
+        </div>
+        
+      </div>
+      
+      <div class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col'>
+        <div class='mdl-card__title'>
+          <h5 class='mdl-card__title-text'>Filled Capsules</h5>
+        </div>
+        
+        <div class='outputs'>
+          
+          <dd-input 
+            locked
+            val='[[capsuleCount]]' 
+            decimals='0'
+            title='Count'
+            units=''
+            details='The number of capusles requred to achieve desired therapuetic
+            dose. Based on the estiamted target fill volume and restricted capsule volume.'>
+          </dd-input>
+          
+          <dd-input 
+            locked
+            val='[[capsuleFillWeight]]' 
+            decimals='2'
+            title='Fill Weight'
+            units='mg'
+            details='The fill weight for each capsule'>
+          </dd-input>
+          
+          <dd-input 
+            locked
+            val='[[capsuleFillVolume]]' 
+            decimals='2'
+            title='Fill Volume'
+            units='ml'
+            details='The fill folume for each capsule'>
+          </dd-input>
+          
+          <dd-input 
+            locked
+            val='[[capsuleFillPercent]]' 
+            decimals='1'
+            min='0'
+            max='100'
+            title='Percent Fill'
+            units='%'
+            details='Ther percent filled for each capsule. Based on the maximum volume
+            listed for each capsule.'>
+          </dd-input>
+          
+        </div>
+        
+      </div>
+      
+      <dd-capsule-card 
+        class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--3-col mdl-cell--4-col-phone'>
+      </dd-capsule-card>
+      
+    </div>
+      
+    <paper-fab icon='icons:arrow-forward' on-tap='_nextPage'></paper-fab>
+    
+  </template>
+  
+</dom-module>
+<script>
+  Polymer({
+    
+    is: 'dd-capsule-dashboard',
+    
+    behaviors: [
+      DosageDesignerSphereBehavior
+    ],
+
+    properties: {
+    
+      /** Details about the capsule name, max fill and optimal fill*/
+      capsuleSize: {
+        type: String,
+        value: "Size #2",
+        notify: true
+      },
+      
+      capsuleVolumeMax: {
+        type: Number, 
+        value: 0.6
+      }, 
+      
+      percentLimit: {
+        type: Number, 
+        value: 85.0
+      }, 
+      
+      capsuleVolumeLimit: {
+        type: Number, 
+        computed: '_calcVolumeLimit(capsuleVolumeMax, percentLimit)'
+      },
+      
+      /** The target dose to achieve*/
+      dose: {
+        type: Number,
+        value: 15
+      },
+      
+      /** The weight of particles required to achieve target dose*/
+      totalFillWeight: {
+        type: Number, 
+        computed: '_calcTotalFillWeight(dose, assay)'
+      }, 
+      
+      /**The volume of particles required to achieve the target dose*/
+      totalFillVolume: {
+        type: Number, 
+        computed: '_calcTotalFillVolume(totalFillWeight, bulkDensity)'
+      },
+      
+      /** The number of capsules required to fill the required volume of particles*/
+      capsuleCount: {
+        type: Number,
+        computed: '_calcCapsuleCount(totalFillVolume, capsuleVolumeLimit)'
+      }, 
+      
+      /** The weight of particles that would be filled into each capsule*/
+      capsuleFillWeight: {
+        type: Number, 
+        computed: '_calcCapsuleFillWeight(totalFillWeight, capsuleCount)'
+      }, 
+      
+      /** The volume of particles that would be filled into each capsule*/
+      capsuleFillVolume: {
+        type: Number, 
+        computed: '_calcCapsuleFillVolume(totalFillVolume, capsuleCount)'
+      }, 
+      
+      /** How full the capsule cacluated as a percent of total volume*/
+      capsuleFillPercent: {
+        type: Number,
+        computed: '_calcCapsuleFillPercent(capsuleFillVolume, capsuleVolumeMax)'
+      }, 
+      
+      lockVolume: {
+        type: Boolean,
+        computed: '_computeLockVolume(capsuleSize)'
+      }
+      
+    },
+  
+    listeners: {
+      'dd-input-change': '_capsuleChanged'
+    },
+    
+    _capsuleChanged: function(newValue, oldValue) {
+      this.debounce('fire capsule change', function(){this.fire('dd-capsule-change');});
+    },
+    
+    /**
+     * Returns the total fill weight in mg
+     * @param {number} volume The max starting volume
+     * @param {number} limit The target percent max fill (0-100)
+     * @return {number} The restricted volume to use for fill capsules
+     */
+    _calcVolumeLimit: function(volume, limit) {
+      return volume * limit / 100;  //assay given as mg/g
+    }, 
+    
+    /**
+     * Returns the total fill weight in mg
+     * @param {number} dose The target dose in mg
+     * @param {number} assay The particles drug assay in mg/g
+     * @return {number} The total fill weight to achieve target dose in mg
+     */
+    _calcTotalFillWeight: function(dose, assay) {
+      return dose / assay * 1000;  //assay given as mg/g
+    }, 
+    
+    /**
+     * Returns the total fill volume (ml)
+     * @param {number} fillWeight The fill weight in mg
+     * @param {number} bulkDensity The particles packing or bulk density in g/ml
+     * @return {number} The total fill volume to achieve target dose in ml
+     */
+    _calcTotalFillVolume: function(fillWeight, bulkDensity) {
+      return fillWeight / 1000 / bulkDensity; //convert grams to mg
+    },
+    
+    /**
+     * Returns the number of capsule to fill the total volume and achieve dose
+     * @param {number} fillVolume The total material (in ml) to fill in capsules
+     * @param {number} capsuleVolume The volume of the capsule 
+     * @return {number} The number of capsule to fill the target volume
+     */
+    _calcCapsuleCount: function(fillVolume, capsuleVolume) {
+      return Math.ceil(fillVolume / capsuleVolume);  //show whole number larger
+    },
+    
+    /**
+     * Returns the fill weight for a single capsule
+     * @param {number} weight The amount of material to be filled in mg
+     * @param {number} count The number of capsules to spread the fill in
+     * @return {number} The fill weight if each capsule is filled evenly
+     */
+    _calcCapsuleFillWeight: function(weight, count) {
+      return weight / count;
+    },
+  
+    /**
+     * Returns the fill volume for a single capsule
+     * @param {number} volume The amount of material to be filled in ml
+     * @param {number} count The number of capsules to spread the fill in
+     * @return {number} The fill volume if each capsule is filled evenly
+     */  
+    _calcCapsuleFillVolume: function(volume, count) {
+      return volume / count;
+    },
+    
+    /**
+     * Returns the fill perecent for a single capsule
+     * @param {number} fillVolume The amount of material filled in capsule in ml
+     * @param {number} capsuleVolume The volume the capsule can contain
+     * @return {number} How full the capsule is by percent (0-100)
+     */
+    _calcCapsuleFillPercent: function(fillVolume, capsuleVolume) {
+      return fillVolume / capsuleVolume * 100;
+    },
+      
+    _fireOpenCapsuleDialog: function(e) {
+      this.fire('dd-open-capsule-dialog');
+    },
+    
+    _computeLockVolume: function(capsuleSize) {
+      if(capsuleSize === 'Custom Capsule') {
+        return false;
+      } else {
+        return true;
+      }
+    }, 
+    
+    _nextPage: function() {
+      page('/DosageDesigner/Report');
+    }
+    
+    
+  });
+</script>

@@ -1,0 +1,142 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="dd-coating-chip">
+  
+  <style is='custom-style'>
+    :host {
+      display: inline-block;
+      color: var(--text-primary-color);
+      margin: 16px;
+    }
+    
+    .coating-chip.mdl-card {
+      width: 256px;
+      height: 256px;
+      background: var(--default-primary-color);
+    }
+    
+    .coating-chip > .mdl-card__actions {
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+    
+    .coating-chip > .mdl-card__title {
+      color: inherit;
+      justify-content: center;
+    }
+    
+    .coating-chip > .mdl-card__title > .mdl-card__title-text {
+      align-self: center;
+      color: inherit;
+    }
+    
+    .coating-chip > .mdl-card__title > .mdl-card__subtitle-text {
+      margin: 24px;  
+      color: inherit;
+    }
+    
+    .coating-chip > .mdl-card__actions > .mdl-button {
+      color: inherit;
+    }
+    
+    .hiddenVisibility {
+      visibility: hidden;
+    }
+    
+  </style>
+  
+  <template>
+    
+    <div class="mdl-card mdl-shadow--2dp coating-chip">
+      
+      <div class='layout horizontal'>
+        <span class='flex'></span>
+        <button id='closeBtn' class="mdl-button mdl-js-button mdl-button--icon" on-tap='_removePage'>
+          <i class="material-icons">clear</i>
+        </button>
+      </div>
+      
+      <div class="mdl-card__title mdl-card--expand layout vertical">
+        <div class='mdl-card__title-text'>
+          <content select='.title-text'></content>
+        </div>
+        <div class='mdl-card__subtitle-text'>
+          <content select='.subtitle-text'></content>
+        </div>
+      </div>
+      
+      <div class="mdl-card__actions mdl-card--border">
+        <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" on-tap='_openPage'>
+          Edit Details
+        </button>
+      </div>
+
+  </template>
+  
+</dom-module>
+<script>
+  Polymer({
+    
+    is: 'dd-coating-chip',
+    
+    properties: {
+      
+      pageName: {
+        type: String,
+        value: ''
+      },
+      
+      noClose: {
+        type: Boolean,
+        observer: '_noClose'
+      }
+      
+    },
+    
+    _openPage: function() {
+      //we access the 'global' app and set the current page
+      //this will then fire the iron-selected function defined in the drawer panel
+      //which in turn causes causes the pagination
+      app.currentPage = this.pageName;
+    },
+    
+    _removePage: function() {
+      var len = app.pages.length;
+      for(var i = 0; i < len; i++) {
+        //app is a the global document with a pages array
+        if (app.pages[i].pageName === this.pageName) {
+          //use polymer array API to remove the index of pages and call notifiers
+          app.splice('pages', i, 1);
+          break;
+        }
+      }
+      //after removing a layer we update the values
+      //updating only the core will fire the chain to update the other layers
+      var core = document.querySelector('dd-core-dashboard');
+      var coatings = document.querySelectorAll('dd-coating-dashboard');
+      //set the intial coating layer using the 
+      coatings[0].set('diameter', core.diameter);
+      coatings[0].set('apparentDensity', core.apparentDensity);
+      coatings[0].set('assay', core.assay);
+    },
+    
+    _noClose: function() {
+      if(this.noClose) {
+        this.$.closeBtn.style.visibility = 'hidden';
+      } else {
+        this.$.closebtn.style.visibility = 'visible';
+      }
+    }
+    
+  });
+
+</script>

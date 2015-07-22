@@ -1,0 +1,243 @@
+<!--
+
+Our input which connects a slider and number input together. Also includes
+a title and description which collapses on click
+
+-->
+
+<link rel='import' href='../../bower_components/polymer/polymer.html'>
+
+<dom-module id='dd-input'>
+  
+  <style is='custom-style'>
+  
+    :host {
+      display: block;
+    }
+    
+    .detail_text {
+      margin: 12px 24px;
+      text-align: justify;
+      font-size: 12px;
+    }
+    
+    paper-slider {
+      display: flex;
+      margin: 12px auto;
+    }
+    
+    paper-icon-button {
+      --iron-icon-width: 18px;
+      --iron-icon-height: 18px;
+      color: var(--disabled-text-color);
+    }
+    
+    input[type=number] {
+      max-width: 64px;
+      font: inherit;
+      color: inherit;
+      border: none;
+      background: inherit;
+      text-align: right;
+      margin-right: 6px;
+    }
+    
+    input:focus {
+      outline: none;
+      border-bottom: 1px solid;
+      border-color: var(--accent-color);
+    }
+    
+    /* remove the input arrows that show up in webkit browsers when using numeric input*/
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      margin: 0;
+    }
+    
+    
+  </style>
+  
+  <template>
+      
+    <paper-item class='layout horizontal center mdl-card__subtitle-text'>
+      
+      <paper-icon-button icon='icons:info-outline' on-tap='toggleDetails'></paper-icon-button>
+      
+      <div class='flex'>{{title}}</div>
+      
+      <input  
+        id='put'
+        class='mdl-textfield__input'
+        on-change='_onInput'
+        type='number'
+        max='{{max}}'
+        min='{{min}}'
+        step='{{_step}}'
+        disabled$='{{locked}}'>
+      </input>
+      
+      <div>{{units}}</div>
+      
+    </paper-item>
+    
+    <iron-collapse id='collapse'>
+      
+      <div class='detail_text mdl-card__subtitle-text'>{{details}}</div>
+      
+      <paper-slider
+        hidden$='{{locked}}'
+        id='slider'
+        min='{{min}}'
+        max='{{max}}'
+        step='{{_step}}'>
+      </paper-slider>
+      
+    </iron-collapse>
+    
+  </template>
+  
+</dom-module>
+
+<script>
+  Polymer({
+    
+    is: 'dd-input', 
+    
+    properties: {
+      
+      title: {
+        type: String,
+        value: 'Title Goes Here',
+      },
+      
+      units: {
+        type: String,
+        value: ''
+      },
+      
+      details: {
+        type: String,
+        value: ''
+      },
+      
+      hide: {
+        type: Boolean, 
+        value: false,
+        observer: '_hideChanged'
+      },
+      
+      locked: {
+        type: Boolean,
+        value: false
+      },
+      
+      val: {
+        type: Number, 
+        value: 50,
+        notify: true,
+        observer: '_valChanged'
+      },
+      
+      min: {
+        type: Number,
+        value: 0
+      }, 
+      
+      max: {
+        type: Number,
+        value: 5000
+      },
+      
+      decimals: {
+        type: Number,
+        value: 1,
+      },
+      
+      _step: {
+        type: Number,
+        computed: '_computeStep(decimals)'
+      }
+      
+    },
+    
+    listeners: {
+      'immediate-value-change': '_sliderImmediateValueChange',
+      'value-change': '_sliderValueChange'
+    },
+    
+    ready: function(){
+      this.$.slider.value = this.val;
+    },
+    
+    _sliderImmediateValueChange: function(){
+      this.val = this.$.slider.immediateValue;
+    },
+    
+    _sliderValueChange: function(){
+      this.val = this.$.slider.value;
+    },
+    
+    toggleDetails: function() {
+      this.$.collapse.toggle();
+    },
+    
+    _valChanged: function(newValue) {
+      //we use the if else in case the script runs before the decimal variable is defined
+      if(this.decimals) {
+        var decimalFactor = Math.pow(10, this.decimals);
+        this.$.put.value = Math.round(newValue * decimalFactor) / decimalFactor;
+      } else {
+        this.$.put.value = newValue;
+      }
+      this.fire('dd-input-change');
+    },
+    
+    _onInput: function(e) {
+      if(e.target.value < this.min){
+        this.val = this.min;  
+        this.$.slider.value = this.min;
+      } else if (e.target.value > this.max){
+        this.val = this.max; 
+        this.$.slider.value = this.max;
+      } else {
+        this.val = e.target.value;
+        this.$.slider.value = e.target.value;
+      }
+    },
+    
+    _hideChanged: function() {
+      this.toggleAttribute('hidden', this.hide);
+    },
+    
+    _toggleSelectMode: function(newValue) {
+      if(newValue) {
+        //If we are in select mode we want to show all elements regardless if they
+        //are currently selected as hidden
+        this.style.display = 'block';
+      } else if(this.hide) {
+        //if the toggle is false we want to return the hidden state if hidden
+        this.style.display = 'none';
+      } else {
+        //if both not hidden and not select mode we display normal block
+        this.style.display = 'block';
+      }
+    },
+    
+    _toggleHide: function(event) {
+      //we set the hide attribute to the oppostie of the checked state
+      this.hide = !this.$.hidebox.checked;
+      event.stopPropagation();
+    },
+    
+    _onInfoButtonTap: function() {
+      this.fire('dd-detail-dialog', {descText: this.details});
+    },
+    
+    _computeStep: function(dec) {
+      return 1 / Math.pow(10, dec);
+    },
+    
+});
+</script>

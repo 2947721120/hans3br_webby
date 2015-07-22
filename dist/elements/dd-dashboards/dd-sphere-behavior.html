@@ -1,0 +1,180 @@
+<!--
+
+This is the base behvaior for determining the different characteristics
+of a sphere. This is used through out the core, coating and capsule page
+
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<script>
+  
+  DosageDesignerSphereBehavior = {
+    
+    properties: {
+      
+      /**diameter in microns **/
+      diameter: {
+        type: Number,
+        value: 1050,
+        notify: true
+      },
+      
+      /**diameter in microns **/
+      radius: {
+        type: Number,
+        computed: '_computeRadius(diameter)'
+      },
+      
+      /**true density in g/ml **/
+      trueDensity: {
+        type: Number,
+        value: 1.5
+      },
+      
+      /**the porosity in percent 0-100 **/
+      porosity: {
+        type: Number,
+        computed: '_computePorosity(trueDensity, apparentDensity)'
+      },
+      
+      /**apparent density in g/ml **/
+      apparentDensity: {
+        type: Number, 
+        value: 1.5
+      },
+      
+      /**factor for adjusting packing orientation**/
+      packingRatio: {
+        type: Number, 
+        value: 0.74048
+      }, 
+      
+      /**apparent density in g/ml **/
+      bulkDensity: {
+        type: Number, 
+        computed: '_computeBulkDensity(apparentDensity, packingRatio)'
+      },
+      
+      /**the amount of drug as mg/gram**/
+      assay: {
+        type: Number, 
+        value: 0
+      },
+      
+      /**mass of beads in grams**/
+      mass: {
+        type: Number, 
+        value: 1
+      }, 
+      
+      /**Surface area of one sphere cm2**/
+      surfaceArea: {
+        type: Number,
+        computed: '_computeSurfaceArea(diameter)'
+      }, 
+      
+      /**Volume of one sphere in cm3 or ml**/
+      volume: {
+        type: Number,
+        computed: '_computeVolume(diameter)'
+      }, 
+      
+      particleCount: {
+        type: Number, 
+        notify: true,
+        computed: '_computeParticleCount(mass, apparentDensity, volume)'
+      }, 
+      
+      totalSurfaceArea: {
+        type: Number, 
+        computed: '_computeTotalSurfaceArea(particleCount, surfaceArea)'
+      }, 
+      
+      surfaceAreaToVolume: {
+        type: Number, 
+        computed: '_computeSurfaceAreaToVolume(surfaceArea, volume)'
+      }
+    },
+    
+    /**
+     * Determine the radius in microns.
+     * @param {number} diam The diameter of a sphere in microns.
+     * @retrun {number} The radius of a sphere in microns.
+     */
+    _computeRadius: function(diam) {
+      return diam / 2;
+    }, 
+    
+    /**
+    * Determine the porosity of the beads
+    * @param {number} trueDens The true density g/ml.
+    * @param {number} apparentDens The apparent density in g/ml.
+    * @return {number} The percent (0-100) of porosity.
+    */
+    _computePorosity: function(trueDens, apparentDens) {
+    return (apparentDens - trueDens) / trueDens * 100;
+    }, 
+    
+    /**
+    * Determine the bulk density 
+    * @param {number} density The apparent density g/ml.
+    * @param {number} ratio The packign ratio of non-void space.
+    * @return {number} The bulk density in g/ml
+    */
+    _computeBulkDensity: function(density, ratio) {
+    return density * ratio;
+    }, 
+     
+    /**
+    * Determine the... 
+    * @param {number} radius The radius of a sphere in microns
+    * @return {number} the surface area of a sphere in cm2
+    */
+    _computeSurfaceArea: function(diameter) {
+     return 4 * Math.PI * Math.pow(diameter / 2 / 10000, 2);  //convert from microns to cm
+    }, 
+     
+    /**
+    * Determine the... 
+    * @param {number} radius The radius of a sphere in microns
+    * @return {number} the volume of a sphere in cm3 or ml
+    */
+    _computeVolume: function(diameter) {
+     return (4/3) * Math.PI * Math.pow(diameter / 2 / 10000, 3); //again convert micon to cm
+    }, 
+     
+    /**
+    * Determine the... 
+    * @param {number} mass The mass of particles in grams
+    * @param {number} density The apparent density of beads in g/ml.
+    * @param {number} volume The volume of a single sphere.
+    * @return {number} The number of particles per mass - count/gram
+    */
+    _computeParticleCount: function(mass, density, volume) {
+    return Math.ceil(mass / density / volume);  //particles per mass (default gram)
+    },
+    
+    /**
+    * Determine the... 
+    * @param {number} count The number of particles
+    * @param {number} surfaceArea The surface area of a single sphere
+    * @return {number} The total / specific surface area - cm2/gram
+    */
+    _computeTotalSurfaceArea: function(count, surfaceArea) {
+     return surfaceArea * count;  //total surface area per gram
+    }, 
+    
+    /**
+    * Determine the... 
+    * @param {number} volume The volume of a single sphere
+    * @param {number} surfaceArea The surface area of a single sphere
+    * @return {number} The ratio of SA to Vol in 1/cm
+    */
+    _computeSurfaceAreaToVolume: function(surfaceArea, volume) {
+     return surfaceArea / volume;
+    }
+   
+  };
+
+</script>

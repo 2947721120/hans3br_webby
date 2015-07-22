@@ -1,0 +1,280 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="dd-core-dashboard">
+  
+  <style is='custom-style'>
+    
+    div.mdl-cell {
+      background: #fff;
+      min-height: 272;
+      overflow: auto;
+    }
+    
+    .height-limit {
+      max-height: 324px;
+    }
+    
+    #productSelectionCard {
+      background-image: url('../../images/SUGLETS-Page.jpg');
+      background-size: cover;
+      background-color: lightgray;
+      background-blend-mode: overlay;
+      justify-content: center;
+    }
+    
+    #productSelectionCard > .mdl-card__title {
+      flex-direction: column;
+    }
+    
+    #productSelectionCard > .mdl-card__title > h5 {
+      align-self: center;
+    }
+    
+    paper-fab {
+      position: fixed;
+      bottom: 36px;
+      right: 36px;
+      z-index: 2;
+    }
+  </style>
+  
+  <template>
+    
+    <div class='mdl-grid'>
+      
+      <div 
+        id='productSelectionCard' 
+        class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--3-col mdl-cell--4-col-phone height-limit' 
+        on-tap='_fireOpenSugletDialog'>
+        
+        <div class='mdl-card__title'>
+          <h5 class='mdl-card__title-text'>{{sugletName}}</h5>
+        </div>
+        
+        <div class='mdl-card__title'>
+          <h5 class='mdl-card__subtitle-text'><span>{{sugletRange}}</span> &mu;m</h5>
+        </div>
+        
+      </div>
+      
+      <div class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col'>
+        
+        <div class='mdl-card__title'>
+          <h5 class='mdl-card__title-text'>Particle Details</h5>
+        </div>
+        
+        <div class='inputs'>
+          
+          <dd-input 
+            val='{{diameter}}' 
+            decimals='1' 
+            min='{{minDiameter}}' 
+            max='{{maxDiameter}}'
+            title='Mean Diameter'
+            units='&mu;m'
+            details='The mean diameter of the starting particle.'>
+          </dd-input>
+            
+          <dd-input 
+            hide
+            val='[[radius]]' 
+            decimals='2' 
+            title='Radius'
+            units='&mu;m'
+            details='The mean particles starting radius in microns.'>
+          </dd-input>  
+          
+          <dd-input 
+            val='{{assay}}' 
+            decimals='2' 
+            min='0' 
+            max='1000' 
+            title='Assay'
+            units='mg/g'
+            details='The starting assay of the core substrate in mg per gram of beads. This is typically zero
+              but in the case of custom granulation or ext/sphereonization the particle may contain
+              the active pharmaceutical ingredient.'>
+          </dd-input>
+          
+          <dd-input 
+            val='{{apparentDensity}}' 
+            decimals='2' 
+            min='0.5' 
+            max='3'
+            title='Apparent Density'
+            units='g/ml'
+            details='The apparent density of the starting core substrate. This apparent denisty includes the porosity of the material
+              but not the void space between particles.'>
+          </dd-input>
+              
+           <dd-input 
+            locked
+            val='[[bulkDensity]]' 
+            decimals='2' 
+            title='Bulk Density'
+            units='g/ml'
+            details='The estimated bulk density of the starting 
+              substrate. The estimtion is based on the optimal packing conditions
+              of a sphereical particles of 74.048% of the 
+              apparent density of beads.'>
+           </dd-input>    
+        </div>
+        
+      </div>
+      
+      <dd-sphere-card 
+        class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--3-col mdl-cell--4-col-phone height-limit'
+        layer-density='[[apparentDensity]]'>
+      </dd-sphere-card>
+      
+      <div class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col'>
+        <div class='mdl-card__title'>
+          <h5 class='mdl-card__title-text'>Theoretical Details</h5>
+        </div>
+        
+        <div class='outputs'>
+          
+          <dd-input 
+            locked
+            val='[[surfaceArea]]' 
+            decimals='4' 
+            title='Surface Area'
+            units='cm^2'
+            details='The surface area of a single sphere.'>
+          </dd-input>
+          
+          <dd-input 
+            locked
+            val='[[volume]]' 
+            decimals='4' 
+            title='Volume'
+            units='ml'
+            details='The volume of a single sphere.'>
+          </dd-input>
+          
+          <dd-input 
+            locked
+            val='[[surfaceAreaToVolume]]' 
+            decimals='4' 
+            title='SA to Volume'
+            units='ml'
+            details='The surface area to volume ratio of a single sphere with the a <span>{{core.diameter}}</span> 
+              &mu;m diameter. This is value is of interest to understand why a batch of small particles have 
+              a significantly larger amount of total surface area.'>
+          </dd-input>
+          
+          <dd-input 
+            locked
+            val='[[particleCount]]' 
+            decimals='0'
+            title='Particle Count'
+            units='count/g'
+            details='The theoretical number of particles per gram of material.'>
+          </dd-input>
+          
+          <dd-input 
+            locked
+            val='[[totalSurfaceArea]]' 
+            decimals='2'
+            title='Specific SA'
+            units='cm^2/g'
+            details='The surface area of a single sphere with 
+              the a <span>{{core.diameter}}</span> &mu;m diameter.'>
+          </dd-input>
+          
+        </div>
+        
+      </div>
+      
+      <dd-capsule-card 
+        class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--3-col mdl-cell--4-col-phone height-limit'
+        capsule-fill-percent='0.4'
+        capsule-size='5'>
+      </dd-capsule-card>
+      
+    </div>
+      
+    <paper-fab icon='icons:arrow-forward' on-tap='_nextPage'></paper-fab>
+    
+  </template>
+  
+</dom-module>
+
+<script>
+  Polymer({
+    
+    is: 'dd-core-dashboard',
+    
+    behaviors: [
+      DosageDesignerSphereBehavior
+    ],
+
+    properties: {
+      
+      sugletName: {
+        type: String,
+        value: 'Suglet',
+        notify: true,
+      },
+      
+      sugletRange: {
+        type: String, 
+        computed: '_computeSugletRange(minDiameter, maxDiameter)'
+      },
+      
+      minDiameter: {
+        type: Number,
+        value: 150
+      },
+      
+      maxDiameter: {
+        type: Number,
+        value: 2000
+      }
+    },
+    
+    listeners: {
+      'dd-input-change': '_passValues'
+    },
+    
+    ready: function() {
+      this.querySelector('dd-sphere-card').set('layerIndex',0);
+      this.sugletName = 'Suglets';
+    },
+    
+    _passValues: function() {
+      this.debounce('pass values', function() {
+        var core = document.querySelector('dd-core-dashboard');
+        var coatings = document.querySelectorAll('dd-coating-dashboard');
+        //set the intial coating layer using the 
+        coatings[0].set('diameter', core.diameter);
+        coatings[0].set('apparentDensity', core.apparentDensity);
+        coatings[0].set('assay', core.assay);
+      }, 10);
+    },
+    
+    _computeSugletRange: function(min, max) {
+      return min + ' - ' + max;
+    },
+    
+    _fireOpenSugletDialog: function() {
+      this.fire('dd-open-suglet-dialog', {suglet: this.sugletName});
+    }, 
+    
+    _nextPage: function() {
+      var path = '/DosageDesigner/' + app.pages[0].pageName;
+      page(path);
+    }
+    
+  });
+</script>

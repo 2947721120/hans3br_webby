@@ -1,0 +1,620 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="dd-coating-dashboard">
+   
+   <style is='custom-style'>
+    
+    
+    div.mdl-cell {
+      background: #fff;
+      min-height: 272;
+      overflow: auto;
+    }
+    
+    .height-limit {
+      max-height: 324px;
+    }
+    
+    .chip {
+      display: flex;
+      align-items: center;
+    }
+    
+    #applicationSelectionChip{
+      background-color: var(--default-primary-color);
+      justify-content: center;
+      margin-bottom: 6px;
+    }
+    
+    h5.mdl-card__title-text.white {
+      color: white;
+    }
+    
+    #productSelectionChip {
+      background-image: url('../../images/Opadry-II-Page.jpg');
+      background-size: cover;
+      background-color: lightgray;
+      background-blend-mode: overlay;
+      justify-content: center;
+      margin-top: 6px;
+    }
+    
+    paper-fab {
+      position: fixed;
+      bottom: 36px;
+      right: 36px;
+      z-index: 2;
+    }
+  </style>
+  
+   <template>
+    
+    <div class='mdl-grid'>
+      
+      <div class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col'>
+        
+        <div class='mdl-card__title'>
+          <h5 class='mdl-card__title-text'>Pre-coated Particle</h5>
+        </div>
+        
+        <div class='inputs'>
+          
+          <dd-input 
+            locked
+            val='[[diameter]]' 
+            decimals='1' 
+            min='150' 
+            max='2300'
+            title='Mean Diameter'
+            units='&mu;m'
+            details='The mean diameter of the starting particle.'>
+          </dd-input>
+            
+          <dd-input 
+            locked
+            val='[[assay]]' 
+            decimals='2' 
+            min='0' 
+            max='1000' 
+            title='Assay'
+            units='mg/g'
+            details='The starting assay of the core substrate in mg per gram of beads. This is typically zero
+              but in the case of custom granulation or ext/sphereonization the particle may contain
+              the active pharmaceutical ingredient.'>
+          </dd-input>
+          
+          <dd-input 
+            locked
+            val='[[apparentDensity]]' 
+            decimals='2' 
+            min='0.5' 
+            max='3'
+            title='Apparent Density'
+            units='g/ml'
+            details='The apparent density of the starting core substrate. This apparent denisty includes the porosity of the material
+              but not the void space between particles.'>
+          </dd-input>
+              
+           <dd-input 
+            locked
+            val='[[bulkDensity]]' 
+            decimals='2' 
+            title='Bulk Density'
+            units='g/ml'
+            details='The estimated bulk density of the starting 
+              substrate. The estimtion is based on the optimal packing conditions
+              of a sphereical particles of 74.048% of the 
+              apparent density of beads.'>
+           </dd-input>    
+        </div>
+        
+      </div>
+      
+      <div class='layout vertical height-limit mdl-card mdl-cell mdl-cell--3-col mdl-cell--4-col-phone'>
+        
+        <div id='applicationSelectionChip'
+          class='flex mdl-shadow--2dp chip' 
+          on-tap='_fireOpenApplicationDialog'>
+          <div class='mdl-card__title layout vertical center-center'>
+            <h5 class='mdl-card__title-text white'>{{coatingApplication}}</h5>
+          </div>
+        </div>
+        
+        <div id='productSelectionChip'
+          class='flex mdl-shadow--2dp chip' 
+          on-tap='_fireOpenCoatingDialog'>
+          <div class='mdl-card__title'>
+            <h5 class='mdl-card__title-text'>{{coatingFamily}}</h5>
+          </div>
+        </div>
+        
+      </div>
+      
+      <div class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col'>
+        
+        <div class='mdl-card__title'>
+          <h5 class='mdl-card__title-text'>Coating Details</h5>
+        </div>
+        
+        <div class='inputs'>
+          
+          <dd-input 
+            val='{{wg}}' 
+            decimals='1' 
+            min='0' 
+            max='100'
+            title='Weight Gain'
+            units='%'
+            details='The amount of coating applied based on the mass of the previous layer.'>
+          </dd-input>
+          
+          <dd-input 
+            val='{{filmDensity}}' 
+            decimals='2' 
+            min='0.5' 
+            max='3'
+            title='Apparent Density'
+            units='g/ml'
+            details='The apparent density of the coating material. This is the density of the film as depostied on the 
+              core substrate. The apparent denisty does include in the porosity of the film. This density if mostly influenced by the
+              type and level of ingredients used in the film coating but also the coating parameters'>
+          </dd-input>
+          
+          <dd-input 
+            id='drugPercent'
+            val='{{drugPercent}}' 
+            decimals='1' 
+            min='0' 
+            max='100'
+            title='API Percent'
+            units='%'
+            details='The amount of API on a dry solids basis. For example 70% indicates 70mg of API are depostited for
+              every 100mg of coating applied.'>
+          </dd-input>
+            
+        </div>
+        
+      </div>
+      
+      <dd-sphere-card 
+        class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--3-col mdl-cell--4-col-phone height-limit'
+        layer-density='{{filmDensity}}'
+        layer-index='{{_computeDiameterIndex(coatingIndex)}}'>
+      </dd-sphere-card>
+      
+      <div class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col'>
+        <div class='mdl-card__title'>
+          <h5 class='mdl-card__title-text'>Coated Particle</h5>
+        </div>
+        
+        <div class='outputs'>
+          
+          <dd-input 
+            locked
+            val='[[coatedDiameter]]' 
+            decimals='1'
+            title='Diameter'
+            units='&mu;m'
+            details='The mean diameter of the particle after coating.'>
+          </dd-input>
+          
+          <dd-input 
+            locked
+            val='[[coatedAssay]]' 
+            decimals='2'
+            title='Assay'
+            units='mg/g'
+            details='The  assay of the particle after coating in mg per gram of beads.'>
+          </dd-input>
+          
+          <dd-input 
+            locked
+            val='[[coatedApparentDensity]]' 
+            decimals='2'
+            title='Apparent Density'
+            units='g/ml'
+            details='The apparent density of the coated particle. 
+              The apparent denisty includes the porosity of the material
+              but not the void space between particles.'>
+          </dd-input>
+          
+          <dd-input 
+            locked
+            val='[[coatedBulkDensity]]' 
+            decimals='2'
+            title='Bulk Density'
+            units='g/ml'
+            details='The estimated bulk density of the coated particle. 
+              The estimtion is based on the optimal packing conditions
+              of a sphereical particles of 74.048% of the apparent density of beads.'>
+          </dd-input>
+          
+        </div>
+        
+      </div>
+      
+      <div class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col'>
+        <div class='mdl-card__title'>
+          <h5 class='mdl-card__title-text'>Film Properties</h5>
+        </div>
+        
+        <div class='outputs'>
+          
+          <dd-input 
+            locked
+            val='[[filmThickness]]' 
+            decimals='2'
+            title='Film Thickness'
+            units='&mu;m'
+            details='The film thickness of this coating layer.'>
+          </dd-input>
+          
+          <dd-input 
+            locked
+            val='[[coatingCoverage]]' 
+            decimals='2'
+            title='Coating Coverage'
+            units='mg/cm^2'
+            details='The amount by mass of coating applied over a surface area. The coating coverage is another way to quantify the amount
+            of coating applied to a core.'>
+          </dd-input>
+          
+          <dd-input 
+            locked
+            id='sa2ft'
+            val='[[sa2ft]]' 
+            decimals='3'
+            title='SA to FT'
+            units='cm^2/g/&mu;m'
+            details='The ratio of the specific surface area of the final coated particle to the film thickness. This value
+            is important for barrier membrane coatings as this value will drive the release profile.'>
+          </dd-input>
+          
+        </div>
+        
+      </div>
+      
+      <dd-capsule-card 
+        class='mdl-card mdl-shadow--2dp mdl-cell mdl-cell--3-col mdl-cell--4-col-phone height-limit'>
+      </dd-capsule-card>
+      
+    </div>
+      
+    <paper-fab icon='icons:arrow-forward' on-tap='_nextPage'></paper-fab>
+    
+  </template>
+  
+</dom-module>
+<script>
+  Polymer({
+    
+    is: 'dd-coating-dashboard',
+    
+    behaviors: [
+      DosageDesignerSphereBehavior
+    ],
+
+    properties: {
+      
+      pageName: {
+        type: String,
+        value: 'Unknown'
+      },
+      
+      coatingIndex: {
+        type: Number,
+        number: 1,
+        observer: '_passValues'
+      },
+      
+      coatingApplication: {
+        type: String,
+        value: 'Coating Layer',
+        observer: '_setupPage'
+      },
+      
+      coatingFamily: {
+        type: String,
+        value: 'Opadry YS-1',
+        observer: '_coatingFamilyChanged'
+      },
+      
+      filmDensity: {
+        type: Number, 
+        value: 1.0,
+      }, 
+      
+      wg: {
+        type: Number, 
+        value: 10
+      },
+      
+      drugPercent: {
+        type: Number,
+        value: 0
+      },
+      
+      coatedDiameter: {
+        type: Number, 
+        computed: '_calcCoatedDiameter(diameter, apparentDensity, wg, filmDensity)'
+      }, 
+      
+      coatedApparentDensity: {
+        type: Number,
+        computed: '_calcCoatedDensity(apparentDensity, filmDensity, wg) '
+      }, 
+      
+      coatedBulkDensity: {
+        type: Number, 
+        computed: '_computeBulkDensity(coatedApparentDensity, packingRatio)'
+      },
+      
+      coatedAssay: {
+        type: Number, 
+        computed: '_calcCoatedAssay(assay, wg, drugPercent)'
+      },
+      
+      /**Surface area of one sphere cm2**/
+      coatedSurfaceArea: {
+        type: Number,
+        computed: '_computeSurfaceArea(coatedDiameter)'
+      }, 
+      
+      /**Volume of one sphere in cm3 or ml**/
+      coatedVolume: {
+        type: Number,
+        computed: '_computeVolume(coatedDiameter)'
+      }, 
+      
+      coatedParticleCount: {
+        type: Number, 
+        computed: '_computeParticleCount(mass, coatedApparentDensity, coatedVolume)'
+      }, 
+      
+      coatedTotalSurfaceArea: {
+        type: Number, 
+        computed: '_computeTotalSurfaceArea(coatedParticleCount, coatedSurfaceArea)'
+      }, 
+      
+      coatedSurfaceAreaToVolume: {
+        type: Number, 
+        computed: '_computeSurfaceAreaToVolume(coatedSurfaceArea, coatedVolume)'
+      },
+      
+      /** The thickness in microns of the film after deposisted on core*/
+      filmThickness: {
+        type: Number,
+        computed: '_calcFilmThickness(diameter, coatedDiameter)'
+      },
+      
+      /** The mg of coating per surface area (cm2)*/
+      coatingCoverage: {
+        type: Number,
+        computed: '_calcCoatingCoverage(totalSurfaceArea, wg)'
+      }, 
+      
+      /** Surface Area to Film Thickness (cm2 / microns)*/
+      sa2ft: {
+        type: Number, 
+        computed: '_calcSa2ft(coatedTotalSurfaceArea, filmThickness)'
+      }
+      
+    }, 
+    
+    listeners: {
+      'dd-input-change': '_passValues'
+    },
+    
+    attached: function() {
+      var coatings = document.querySelectorAll('dd-coating-dashboard');
+      //set the intial coating layer using the 
+      if(this.coatingIndex>0) {
+        var prevLayer = coatings[this.coatingIndex - 1];
+        this.set('diameter', prevLayer.coatedDiameter);
+        this.set('apparentDensity', prevLayer.coatedApparentDensity);
+        this.set('assay', prevLayer.coatedAssay);
+      }
+    },
+    
+    detached: function() {
+      //get all the coating layer - current layer is alredy removed
+      var coatings = document.querySelectorAll('dd-coating-dashboard');
+      //set the intial coating layer using the 
+      if(this.coatingIndex === 0) {
+        console.log('update from core');
+        //if this was the first coating layer we update the next layer with the core data
+        var core = document.querySelector('dd-core-dashboard');
+        //layer is alredy detached so we get the new layer in it's index position
+        var nextLayer = coatings[this.coatingIndex];
+        nextLayer.set('diameter', core.diameter);
+        nextLayer.set('apparentDensity', core.pparentDensity);
+        nextLayer.set('assay', core.assay);
+      } else if(this.coatingIndex === coatings.length) { //we do not remove 1 because a layer was detaached alredy and testing if it was the last layer
+        console.log('update capsule');
+        //if this was the last layer we get the previous layer and update the capusle
+        var capsule = document.querySelector('dd-capsule-dashboard');
+        var prevLayer = coatings[this.coatingIndex - 1];
+        capsule.set('diameter', prevLayer.coatedDiameter);
+        capsule.set('assay', prevLayer.coatedAssay);
+        capsule.set('apparentDensity', prevLayer.coatedApparentDensity);
+      } else {
+        console.log('update other layer');
+        //if ths is not the first or last we update the previous layer to the next layer
+        var prevLayer = coatings[this.coatingIndex - 1];
+        var nextLayer = coatings[this.coatingIndex];
+        nextLayer.set('diameter', prevLayer.coatedDiameter);
+        nextLayer.set('apparentDensity', prevLayer.coatedApparentDensity);
+        nextLayer.set('assay', prevLayer.coatedAssay);
+      }
+    },
+    
+    _computeDiameterIndex: function(coatingIndex) {
+      return coatingIndex + 1;
+    },
+    
+    _passValues: function() {
+      this.debounce('pass value', function() {
+        //we get all the coating pages using polyer API - returns ARRAY!
+        var coatings = document.querySelectorAll('dd-coating-dashboard');
+        var capsule = document.querySelector('dd-capsule-dashboard');
+        
+        //if the layer is not the last we update the next coating layers values
+        //if the layer is the last we update the capsule layers
+        //again always using polymer set api
+        if(this.coatingIndex + 1 < coatings.length) {
+          coatings[this.coatingIndex + 1].set('diameter', coatings[this.coatingIndex].coatedDiameter);
+          coatings[this.coatingIndex + 1].set('apparentDensity', coatings[this.coatingIndex].coatedApparentDensity);
+          coatings[this.coatingIndex + 1].set('assay', coatings[this.coatingIndex].coatedAssay);
+        } else {
+          capsule.set('diameter', coatings[this.coatingIndex].coatedDiameter);
+          capsule.set('apparentDensity', coatings[this.coatingIndex].coatedApparentDensity);
+          capsule.set('assay', coatings[this.coatingIndex].coatedAssay);
+          this.fire('dd-last-diameter-change');
+        }
+      }, 10);
+    },
+    
+    _setupPage: function(newValue) {
+      //we update the pages array with new page title
+      var path = 'pages.' + this.coatingIndex + '.pageTitle';
+      app.set(path, newValue);
+      //now set the page up as needed
+      this.drugPercent = 0;
+      this.$.sa2ft.hide = true;
+      this.$.drugPercent.hide = true;
+      if(newValue === 'Drug Layering') {
+        this.$.drugPercent.hide = false;
+        this.drugPercent = 70;
+        this.coatingFamily = 'Opadry 03A';
+        this.filmDensity = 1.4;
+        this.wg = 25;
+      } else if (newValue === 'Seal Coating') {
+        this.coatingFamily = 'Opadry 03A';
+        this.filmDensity = 1.4;
+        this.wg = 5;
+      } else if(newValue === 'Enteric Coating') {
+        this.coatingFamily = 'Acryleze II';
+        this.filmDensity = 1.6;
+        this.wg = 32;
+      } else if(newValue === 'Barrier Membrane') {
+        this.$.sa2ft.hide = false;
+        this.coatingFamily = 'Surelease';
+        this.filmDensity = 1.01;
+        this.wg = 14;
+      } else {
+        this.coatingFamily = 'Opadry YS-1';
+        this.filmDensity = 1.02;
+        this.$.drugPercent.hide = false;
+        this.$.sa2ft.hide = false;
+        this.wg = 12;
+      }
+    },
+    
+    _coatingFamilyChanged: function(newValue) {
+      //we update the pages array with new page title
+      var path = 'pages.' + this.coatingIndex + '.productTitle';
+      app.set(path, newValue);
+    },
+    
+    /**
+     * sets the diameter of the coated particle
+     * @param {number} coreDiam The starting diameter of the sphere in microns
+     * @param {number} coreDens The starting density of the sphere in g/ml
+     * @param {number} coatWg The coating weight gain applied in percent (0-100)
+     * @param {number} coatDens The density of the coating material in g/ml 
+     */
+    _calcCoatedDiameter: function(coreDiam, coreDens, coatWg, coatDens) {
+      var step1 = 1 + (coatWg / 100 * coreDens / coatDens);
+      var step2 = Math.pow(coreDiam/2, 3);
+      var step3 = step1*step2;
+      var step4 = Math.pow(step3, 1.0/3.0);
+      return 2 * step4;
+    },
+    
+    /**
+     * sets the density of the coated particle
+     * @param {number} coreDens The starting density of the sphere in g/ml
+     * @param {number} wgPercent The coating weight gain applied in percent (0-100)
+     * @param {number} coatDens The density of the coating material in g/ml 
+     */
+    _calcCoatedDensity: function(coreDens, coatDens, wgPercent) {
+      var wg = wgPercent / 100;
+      return (1 / (1 + wg) * coreDens) + (wg / (1 + wg) * coatDens);
+    },
+    
+    /**
+     * Sets the assay of the coated particle
+     * @param {number} coreAssay The starting assay of the sphere in mg/g
+     * @param {number} wg The coating weight gain applied in percent (0-100)
+     * @param {number} drug The percent of the coating that is Drug or API (0-100) 
+     */
+    _calcCoatedAssay: function(coreAssay, wg, drug){
+      var batch = 1; //this is one gram batch to help make the calculations more legible
+      var apiStarted = coreAssay * batch; //this gives us mg of API already present
+      var apiAddedGrams = batch * wg / 100  * drug / 100;  //api in grams
+      var apiAdded = apiAddedGrams * 1000;  //api in mg which we care about
+      var endWeight = batch + wg / 100;
+      return (apiStarted + apiAdded) / endWeight;
+    },
+    
+    /**
+     * Rturns the film thickness in microns
+     * @param {number} startDiam The sphere diameter before coating
+     * @param {number} endDiam The sphere diameter after coating
+     * @return {number} The film thickness in microns
+     */
+    _calcFilmThickness: function(startDiam, endDiam) {
+      return (endDiam - startDiam) / 2;
+    }, 
+    
+    /**
+     * Returns the coating coverage mg/cm2. 
+     * @param {number} totalSurfaceArea The surface area per gram of beads
+     * @param {number} wg The coating weight gain applied in percent (0-100)
+     * @return {number} The Coating Coverage as mg of coating per cm2 of surface area
+     */
+    _calcCoatingCoverage: function(totalSurfaceArea, wg) {
+      var mass = 1; //mass in grams we include in case we update this calcualtion one day
+      var sa = totalSurfaceArea * mass; //totalSA is in cm2 / grams - this gives us the actual surface are
+      var coatingMG = mass * 1000 * wg / 100; //coating in mg, wg is in percent
+      return coatingMG / sa;          
+    },
+    
+    /**
+     * Returns the surface area to film thickness ratio
+     * @param {number} totalSurfaceArea The amount of surface are per gram of beads
+     * @param {number} filmThickn The thickness of the coating layer
+     * @return {number} The ratio as cm2 per gram of beads per micron film thickness
+     */
+    _calcSa2ft: function(totalSurfaceArea, filmThick) {
+      return totalSurfaceArea / filmThick;   
+    },
+    
+    _fireOpenCoatingDialog: function() {
+      this.fire('dd-open-coating-dialog', {application: this.coatingApplication, coating: this.coatingFamily});
+    },
+
+    _fireOpenApplicationDialog: function() {
+      this.fire('dd-open-application-dialog',  {application: this.coatingApplication});
+    },
+    
+    _nextPage: function() {
+      if(this.coatingIndex < app.pages.length - 1){
+        var path = '/DosageDesigner/' + app.pages[this.coatingIndex + 1].pageName;
+        page(path);
+      } else {
+        page('/DosageDesigner/Capsule')
+      }
+    }
+  });
+</script>
